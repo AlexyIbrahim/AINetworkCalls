@@ -21,8 +21,6 @@ You can use SPM to install `AINetworkCalls` by adding it to your `Package.swift`
 .package(url: "https://github.com/AlexyIbrahim/AINetworkCalls.git", from: "1.0.0")
 ```
 
-
-
 ## Usage example
 
 ```swift
