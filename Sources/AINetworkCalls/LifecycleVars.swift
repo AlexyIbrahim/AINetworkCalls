@@ -8,6 +8,6 @@
 
 import UIKit
 
-struct LifecycleVars {
+internal struct LifecycleVars {
     static var endpoint: String = ""
 }

@@ -67,7 +67,7 @@ internal class AINetworkCallsUtils: NSObject {
         let title:String? = ((title != nil) ? title!:nil)
         let alertViewController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        alertViewController.addAction(UIAlertAction(title: "Ok", style: .cancel) { action in
+        alertViewController.addAction(UIAlertAction(title: "Okay", style: .cancel) { action in
             alertViewController.dismiss(animated: true, completion: nil)
             okayCallback?()
         })
@@ -81,8 +81,7 @@ internal class AINetworkCallsUtils: NSObject {
 
 }
 
-extension Dictionary where Key == String, Value == Any {
-    
+internal extension Dictionary where Key == String, Value == Any {
     mutating func safelyAdd(_ value: Any?, forKey key: String) {
         guard let value = value else {
             return
