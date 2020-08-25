@@ -8,9 +8,10 @@
 
 import UIKit
 import AINetworkCalls
+import RxSwift
 
-class ViewController: UIViewController {
-
+class ViewController: MasterViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -23,20 +24,32 @@ class ViewController: UIViewController {
     func getAPITest() {
         let parameters = ["foo1": "bar1",
                           "foo2": "bar2"]
-        AINetworkCalls.get(fullPath: "https://postman-echo.com/get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (json) in
-            print("json response: \(String(describing: json))")
+        _ = AINetworkCalls.get(function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (json) in
+            print("get json response: \(String(describing: json))")
         }) { (json, error) in
-            print("error json: \(String(describing: json))")
+            print("get error json: \(String(describing: json))")
         }
+        
+        AINetworkCalls.rxGet(function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (json) in
+            print("rxGet json response: \(String(describing: json))")
+        }) { (error) in
+            print("rxGet error: \(String(describing: error))")
+        }.disposed(by: disposeBag)
     }
     
     func postAPITest() {
         let parameters = ["hand": "wave"]
-        AINetworkCalls.post(fullPath: "https://postman-echo.com/post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (json) in
-            print("json: \(String(describing: json))")
+        _ = AINetworkCalls.post(function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (json) in
+            print("post json response: \(String(describing: json))")
         }) { (json, error) in
-            print("error json: \(String(describing: json))")
+            print("post error: \(String(describing: json))")
         }
+        
+        AINetworkCalls.rxPost(function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (json) in
+            print("rxPost json response: \(String(describing: json))")
+        }) { (error) in
+            print("rxPost error: \(String(describing: error))")
+        }.disposed(by: disposeBag)
     }
 
 

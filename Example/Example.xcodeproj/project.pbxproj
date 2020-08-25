@@ -14,6 +14,7 @@
 		7BC72EBF24F30B3500913006 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7BC72EBD24F30B3500913006 /* Main.storyboard */; };
 		7BC72EC124F30B3600913006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7BC72EC024F30B3600913006 /* Assets.xcassets */; };
 		7BC72EC424F30B3600913006 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7BC72EC224F30B3600913006 /* LaunchScreen.storyboard */; };
+		7BE4A01424F52E0000E6BCE3 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE4A01324F52E0000E6BCE3 /* MasterViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		7BC72EC024F30B3600913006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7BC72EC324F30B3600913006 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7BC72EC524F30B3600913006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7BE4A01324F52E0000E6BCE3 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 			children = (
 				7BC72EB724F30B3500913006 /* AppDelegate.swift */,
 				7BC72EB924F30B3500913006 /* SceneDelegate.swift */,
+				7BE4A01324F52E0000E6BCE3 /* MasterViewController.swift */,
 				7BC72EBB24F30B3500913006 /* ViewController.swift */,
 				7BC72EBD24F30B3500913006 /* Main.storyboard */,
 				7BC72EC024F30B3600913006 /* Assets.xcassets */,
@@ -153,6 +156,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BE4A01424F52E0000E6BCE3 /* MasterViewController.swift in Sources */,
 				7BC72EBC24F30B3500913006 /* ViewController.swift in Sources */,
 				7BC72EB824F30B3500913006 /* AppDelegate.swift in Sources */,
 				7BC72EBA24F30B3500913006 /* SceneDelegate.swift in Sources */,

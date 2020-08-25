@@ -2,7 +2,8 @@ import Foundation
 import UIKit
 import Alamofire
 import SwiftyJSON
-
+import RxCocoa
+import RxSwift
 
 public struct AINetworkCallsRequestModel {
     private var _path: String? = nil
@@ -54,11 +55,32 @@ public class AINetworkCalls: NSObject {
     private static var globalSuccessCallback: ((_ response: AFDataResponse<Any>, _ fetchResult:JSON)->Void)?
     private static var glocalErrorCallBack: ((_ response: AFDataResponse<Any>, _ fetchResult:JSON?, _ error:Error?, _ errorStatusCode: Int)->Void)?
     
+    public final class func initWithEndpoint(_ endpoint: String) {
+        LifecycleVars.endpoint = endpoint
+    }
+    
     // MARK: - API call methods
-    public final class func get(fullPath:String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    
+    
+    
+    // MARK: GET
+    public final class func rxGet(function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        return Single<JSON>.create { single in
+            let request = AINetworkCalls.get(function: function, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
+                single(.success(json))
+            }) { (json, error) in
+                single(.error(error!))
+            }
+            
+            return Disposables.create {
+                request?.cancel()
+            }
+        }
+    }
+    public final class func get(function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
-            var path = fullPath
-            path = path.replacingOccurrences(of: "//", with: "/") // double checking
+            var path = LifecycleVars.endpoint + (function.hasPrefix("/") ? function : "/\(function)")
+            path = path.replacingOccurrences(of: "//", with: "/")
             
             let headers: HTTPHeaders? = headers
 
@@ -75,10 +97,24 @@ public class AINetworkCalls: NSObject {
         return nil
     }
     
-    public final class func post(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    // MARK: POST
+    public final class func rxPost(function:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        return Single<JSON>.create { single in
+            let request = AINetworkCalls.post(function: function, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
+                single(.success(json))
+            }) { (json, error) in
+                single(.error(error!))
+            }
+            
+            return Disposables.create {
+                request?.cancel()
+            }
+        }
+    }
+    public final class func post(function:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
-            var path = fullPath
-            path = path.replacingOccurrences(of: "//", with: "/") // double checking
+            var path = LifecycleVars.endpoint + (function.hasPrefix("/") ? function : "/\(function)")
+            path = path.replacingOccurrences(of: "//", with: "/")
             
             let headers: HTTPHeaders? = headers
             
@@ -95,10 +131,24 @@ public class AINetworkCalls: NSObject {
         return nil
     }
     
-    public final class func put(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    // MARK: PUT
+    public final class func rxPut(function:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        return Single<JSON>.create { single in
+            let request = AINetworkCalls.put(function: function, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
+                single(.success(json))
+            }) { (json, error) in
+                single(.error(error!))
+            }
+            
+            return Disposables.create {
+                request?.cancel()
+            }
+        }
+    }
+    public final class func put(function:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
-            var path = fullPath
-            path = path.replacingOccurrences(of: "//", with: "/") // double checking
+            var path = LifecycleVars.endpoint + (function.hasPrefix("/") ? function : "/\(function)")
+            path = path.replacingOccurrences(of: "//", with: "/")
             
             let headers: HTTPHeaders? = headers
             
@@ -115,10 +165,24 @@ public class AINetworkCalls: NSObject {
         return nil
     }
     
-    public final class func multipart(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> UploadRequest? {
+    // MARK: MULTIPART
+    public final class func rxMultipart(function:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> Single<JSON> {
+        return Single<JSON>.create { single in
+            let request = AINetworkCalls.multipart(function: function, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: { (json) in
+                single(.success(json))
+            }) { (json, error) in
+                single(.error(error!))
+            }
+            
+            return Disposables.create {
+                request?.cancel()
+            }
+        }
+    }
+    public final class func multipart(function:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> UploadRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
-            var path = fullPath
-            path = path.replacingOccurrences(of: "//", with: "/") // double checking
+            var path = LifecycleVars.endpoint + (function.hasPrefix("/") ? function : "/\(function)")
+            path = path.replacingOccurrences(of: "//", with: "/")
             
             let headers: HTTPHeaders? = headers
 
