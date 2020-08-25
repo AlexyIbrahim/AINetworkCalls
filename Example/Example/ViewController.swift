@@ -30,11 +30,13 @@ class ViewController: MasterViewController {
             print("get error json: \(String(describing: json))")
         }
         
+        /* Using RxSwift
         AINetworkCalls.rxGet(function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (json) in
             print("rxGet json response: \(String(describing: json))")
         }) { (error) in
             print("rxGet error: \(String(describing: error))")
         }.disposed(by: disposeBag)
+         */
     }
     
     func postAPITest() {
@@ -45,11 +47,13 @@ class ViewController: MasterViewController {
             print("post error: \(String(describing: json))")
         }
         
+        /* Using RxSwift
         AINetworkCalls.rxPost(function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (json) in
             print("rxPost json response: \(String(describing: json))")
         }) { (error) in
             print("rxPost error: \(String(describing: error))")
         }.disposed(by: disposeBag)
+         */
     }
 
 
