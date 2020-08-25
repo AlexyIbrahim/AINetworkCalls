@@ -55,7 +55,7 @@ public class AINetworkCalls: NSObject {
     private static var glocalErrorCallBack: ((_ response: AFDataResponse<Any>, _ fetchResult:JSON?, _ error:Error?, _ errorStatusCode: Int)->Void)?
     
     // MARK: - API call methods
-    public final class func get(fullPath:String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+    public final class func get(fullPath:String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
             var path = fullPath
             path = path.replacingOccurrences(of: "//", with: "/") // double checking
@@ -66,14 +66,16 @@ public class AINetworkCalls: NSObject {
             
             self.globalRequestCallback?(AINetworkCallsRequestModel.init(withPath: path, method: "GET", headers: headers, parameters: parameters))
             
-            AF.request(path, method: HTTPMethod.get, parameters: parameters, encoding: encoding ?? .queryString, headers: headers).validate(statusCode: 200..<300)
+            let request = AF.request(path, method: HTTPMethod.get, parameters: parameters, encoding: encoding ?? .queryString, headers: headers).validate(statusCode: 200..<300)
                 .responseJSON { response in
                     AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
             }
+            return request
         }
+        return nil
     }
     
-    public final class func post(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+    public final class func post(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
             var path = fullPath
             path = path.replacingOccurrences(of: "//", with: "/") // double checking
@@ -84,14 +86,16 @@ public class AINetworkCalls: NSObject {
             
             self.globalRequestCallback?(AINetworkCallsRequestModel.init(withPath: path, method: "POST", headers: headers, body: parameters))
             
-            AF.request(path, method: HTTPMethod.post, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200..<300)
+            let request = AF.request(path, method: HTTPMethod.post, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200..<300)
                 .responseJSON { response in
                     AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
             }
+            return request
         }
+        return nil
     }
     
-    public final class func put(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+    public final class func put(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
             var path = fullPath
             path = path.replacingOccurrences(of: "//", with: "/") // double checking
@@ -102,14 +106,16 @@ public class AINetworkCalls: NSObject {
             
             self.globalRequestCallback?(AINetworkCallsRequestModel.init(withPath: path, method: "PUT", headers: headers, body: parameters))
             
-            AF.request(path, method: HTTPMethod.put, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200..<300)
+            let request = AF.request(path, method: HTTPMethod.put, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200..<300)
                 .responseJSON { response in
                     AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
             }
+            return request
         }
+        return nil
     }
     
-    public final class func multipart(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+    public final class func multipart(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> UploadRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
             var path = fullPath
             path = path.replacingOccurrences(of: "//", with: "/") // double checking
@@ -120,7 +126,7 @@ public class AINetworkCalls: NSObject {
             
             self.globalRequestCallback?(AINetworkCallsRequestModel.init(withPath: path, method: "MULTIPART", headers: headers, body: parameters))
             
-            AF.upload(multipartFormData: { multiPart in
+            let request = AF.upload(multipartFormData: { multiPart in
                 multipartCallback?(multiPart)
                 parameters.forEach {
                     if $0.value is UIImage {
@@ -140,7 +146,9 @@ public class AINetworkCalls: NSObject {
             }).responseJSON(completionHandler: { response in
                 AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
             })
+            return request
         }
+        return nil
     }
     
     // MARK: - Callback methods
@@ -196,13 +204,13 @@ private extension AINetworkCalls {
     final class func handleError(_ error: Error?, errorCode:Int? = nil, fetchResult: [String: Any]? = nil) {
         switch errorCode {
         case URLError.Code.timedOut.rawValue:
-            AINetworkCallsUtils.displayNativeMessage("Request Timeout")
+            AINetworkCallsUtils.displayMessage("Request Timeout")
         case URLError.Code.cannotParseResponse.rawValue:
-            AINetworkCallsUtils.displayNativeMessage("Could not parse response")
+            AINetworkCallsUtils.displayMessage("Could not parse response")
         case URLError.Code.badServerResponse.rawValue:
-            AINetworkCallsUtils.displayNativeMessage("Server is temporarily unavailable")
+            AINetworkCallsUtils.displayMessage("Server is temporarily unavailable")
         default:
-            AINetworkCallsUtils.displayNativeMessage("Error")
+            AINetworkCallsUtils.displayMessage("Error")
         }
     }
 }

@@ -61,34 +61,16 @@ internal class AINetworkCallsUtils: NSObject {
         return topController
     }
     
-    internal final class func displayNativeMessage(_ message: String, withTitle title:String? = nil, okayCallback: (() -> ())? = nil, yesCallback: (() -> ())? = nil, noCallback: (() -> ())? = nil, dismissDelay: Float? = nil, dismissDelayCallback: (() -> ())? = nil) {
+    internal final class func displayMessage(_ message: String, withTitle title:String? = nil, okayCallback: (() -> ())? = nil) {
         let viewController: UIViewController? = self.topMostWindowController()
         
         let title:String? = ((title != nil) ? title!:nil)
         let alertViewController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        if (noCallback != nil) || (yesCallback != nil) {
-            alertViewController.addAction(UIAlertAction(title: "No", style: .default) { action in
-                alertViewController.dismiss(animated: true, completion: nil)
-                if let noCallback = noCallback {
-                    noCallback()
-                }
-            })
-            alertViewController.addAction(UIAlertAction(title: "Yes", style: .default) { action in
-
-                alertViewController.dismiss(animated: true, completion: nil)
-                if let yesCallback = yesCallback {
-                    yesCallback()
-                }
-            })
-        } else {
-            alertViewController.addAction(UIAlertAction(title: "Ok", style: .cancel) { action in
-                alertViewController.dismiss(animated: true, completion: nil)
-                if let okayCallback = okayCallback {
-                    okayCallback()
-                }
-            })
-        }
+        alertViewController.addAction(UIAlertAction(title: "Ok", style: .cancel) { action in
+            alertViewController.dismiss(animated: true, completion: nil)
+            okayCallback?()
+        })
         
         
         alertViewController.popoverPresentationController?.sourceView = AINetworkCallsUtils.topMostWindowController()?.view
