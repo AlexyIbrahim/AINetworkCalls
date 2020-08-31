@@ -64,29 +64,13 @@ public class AINetworkCalls: NSObject {
         path = path.replacingOccurrences(of: "//", with: "/")
         return path
     }
-    
-    // MARK: - API call methods
-    
+}
+
+// MARK: - Alamofire
+extension AINetworkCalls {
     
     
     // MARK: GET
-    public final class func rxGet(function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
-        let path = generatePathFromFunction(function)
-        return AINetworkCalls.rxGet(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
-    }
-    public final class func rxGet(fullPath: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
-        return Single<JSON>.create { single in
-            let request = AINetworkCalls.get(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
-                single(.success(json))
-            }) { (json, error) in
-                single(.error(error!))
-            }
-            
-            return Disposables.create {
-                request?.cancel()
-            }
-        }
-    }
     public final class func get(function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         let path = generatePathFromFunction(function)
         return AINetworkCalls.get(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
@@ -109,25 +93,6 @@ public class AINetworkCalls: NSObject {
     }
     
     // MARK: POST
-    public final class func rxPost(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
-        let path = generatePathFromFunction(function)
-        return AINetworkCalls.rxPost(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
-    }
-    
-    public final class func rxPost(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
-        return Single<JSON>.create { single in
-            let request = AINetworkCalls.post(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
-                single(.success(json))
-            }) { (json, error) in
-                single(.error(error!))
-            }
-
-            return Disposables.create {
-                request?.cancel()
-            }
-        }
-    }
-    
     public final class func post(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         let path = generatePathFromFunction(function)
         return AINetworkCalls.post(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
@@ -150,23 +115,6 @@ public class AINetworkCalls: NSObject {
     }
     
     // MARK: PUT
-    public final class func rxPut(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
-        let path = generatePathFromFunction(function)
-        return AINetworkCalls.rxPut(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
-    }
-    public final class func rxPut(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
-        return Single<JSON>.create { single in
-            let request = AINetworkCalls.put(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
-                single(.success(json))
-            }) { (json, error) in
-                single(.error(error!))
-            }
-            
-            return Disposables.create {
-                request?.cancel()
-            }
-        }
-    }
     public final class func put(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         let path = generatePathFromFunction(function)
         return AINetworkCalls.put(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
@@ -189,23 +137,6 @@ public class AINetworkCalls: NSObject {
     }
     
     // MARK: MULTIPART
-    public final class func rxMultipart(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> Single<JSON> {
-        let path = generatePathFromFunction(function)
-        return AINetworkCalls.rxMultipart(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: successCallback, errorCallback: errorCallback)
-    }
-    public final class func rxMultipart(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> Single<JSON> {
-        return Single<JSON>.create { single in
-            let request = AINetworkCalls.multipart(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: { (json) in
-                single(.success(json))
-            }) { (json, error) in
-                single(.error(error!))
-            }
-            
-            return Disposables.create {
-                request?.cancel()
-            }
-        }
-    }
     public final class func multipart(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> UploadRequest? {
         let path = generatePathFromFunction(function)
         
@@ -244,24 +175,91 @@ public class AINetworkCalls: NSObject {
         }
         return nil
     }
+}
+
+// MARK: - rx
+extension AINetworkCalls {
     
-    // MARK: - Callback methods
-    public final class func setGlobalRequestCallback(globalRequestCallback:@escaping ((_ request: AINetworkCallsRequestModel)->Void)) {
-        AINetworkCalls.globalRequestCallback = globalRequestCallback
+    
+    // MARK: GET
+    public final class func rxGet(function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        let path = generatePathFromFunction(function)
+        return AINetworkCalls.rxGet(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
+    }
+    public final class func rxGet(fullPath: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        return Single<JSON>.create { single in
+            let request = AINetworkCalls.get(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
+                single(.success(json))
+            }) { (json, error) in
+                single(.error(error!))
+            }
+            
+            return Disposables.create {
+                request?.cancel()
+            }
+        }
     }
     
-    public final class func setGlobalUploadRequestCallback(globalUploadRequestCallback:@escaping ((_ request: UploadRequest)->Void)) {
-        AINetworkCalls.globalUploadRequestCallback = globalUploadRequestCallback
-    }
-    public final class func setGlobalSuccessCallback(globalSuccessCallback:@escaping ((_ response: AFDataResponse<Any>, _ fetchResult:JSON)->Void)) {
-        AINetworkCalls.globalSuccessCallback = globalSuccessCallback
+    // MARK: POST
+    public final class func rxPost(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        let path = generatePathFromFunction(function)
+        return AINetworkCalls.rxPost(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
     }
     
-    public final class func setGlocalErrorCallBack(glocalErrorCallBack: @escaping ((_ response: AFDataResponse<Any>, _ fetchResult:JSON?, _ error:Error?, _ errorStatusCode: Int)->Void)) {
-        AINetworkCalls.glocalErrorCallBack = glocalErrorCallBack
+    public final class func rxPost(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        return Single<JSON>.create { single in
+            let request = AINetworkCalls.post(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
+                single(.success(json))
+            }) { (json, error) in
+                single(.error(error!))
+            }
+
+            return Disposables.create {
+                request?.cancel()
+            }
+        }
+    }
+    
+    // MARK: PUT
+    public final class func rxPut(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        let path = generatePathFromFunction(function)
+        return AINetworkCalls.rxPut(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
+    }
+    public final class func rxPut(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<JSON> {
+        return Single<JSON>.create { single in
+            let request = AINetworkCalls.put(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (json) in
+                single(.success(json))
+            }) { (json, error) in
+                single(.error(error!))
+            }
+            
+            return Disposables.create {
+                request?.cancel()
+            }
+        }
+    }
+    
+    // MARK: MULTIPART
+    public final class func rxMultipart(function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> Single<JSON> {
+        let path = generatePathFromFunction(function)
+        return AINetworkCalls.rxMultipart(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: successCallback, errorCallback: errorCallback)
+    }
+    public final class func rxMultipart(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> Single<JSON> {
+        return Single<JSON>.create { single in
+            let request = AINetworkCalls.multipart(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: { (json) in
+                single(.success(json))
+            }) { (json, error) in
+                single(.error(error!))
+            }
+            
+            return Disposables.create {
+                request?.cancel()
+            }
+        }
     }
 }
 
+// MARK: - Handling
 private extension AINetworkCalls {
     /**
      Handle Alamofire response
@@ -306,5 +304,27 @@ private extension AINetworkCalls {
         default:
             AINetworkCallsUtils.displayMessage("Error")
         }
+    }
+}
+
+
+// MARK: - Misc
+extension AINetworkCalls {
+    
+    
+    // MARK: Callback methods
+    public final class func setGlobalRequestCallback(globalRequestCallback:@escaping ((_ request: AINetworkCallsRequestModel)->Void)) {
+        AINetworkCalls.globalRequestCallback = globalRequestCallback
+    }
+    
+    public final class func setGlobalUploadRequestCallback(globalUploadRequestCallback:@escaping ((_ request: UploadRequest)->Void)) {
+        AINetworkCalls.globalUploadRequestCallback = globalUploadRequestCallback
+    }
+    public final class func setGlobalSuccessCallback(globalSuccessCallback:@escaping ((_ response: AFDataResponse<Any>, _ fetchResult:JSON)->Void)) {
+        AINetworkCalls.globalSuccessCallback = globalSuccessCallback
+    }
+    
+    public final class func setGlocalErrorCallBack(glocalErrorCallBack: @escaping ((_ response: AFDataResponse<Any>, _ fetchResult:JSON?, _ error:Error?, _ errorStatusCode: Int)->Void)) {
+        AINetworkCalls.glocalErrorCallBack = glocalErrorCallBack
     }
 }
