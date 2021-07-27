@@ -15,13 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        AINetworkCalls.initWithEndpoint("https://postman-echo.com/")
+        AINetworkCalls.initWithEndpoints([.init(endpointKey: "main", rawValue: "https://postman-echo.com/")])
 
         // 🌿 Optional
         AINetworkCalls.setGlobalRequestCallback { (request) in
             print("request: \(String(describing: request.toJson()))")
         }
-        
         
         return true
     }

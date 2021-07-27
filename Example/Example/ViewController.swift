@@ -18,13 +18,12 @@ class ViewController: MasterViewController {
                 
         self.getAPITest()
         self.postAPITest()
-        
     }
     
     func getAPITest() {
         let parameters = ["foo1": "bar1",
                           "foo2": "bar2"]
-        _ = AINetworkCalls.get(function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (json) in
+        _ = AINetworkCalls.get(endpointKey: "main", function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (json) in
             print("get json response: \(String(describing: json))")
         }) { (json, error) in
             print("get error json: \(String(describing: json))")
@@ -41,7 +40,7 @@ class ViewController: MasterViewController {
     
     func postAPITest() {
         let parameters = ["hand": "wave"]
-        _ = AINetworkCalls.post(function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (json) in
+        _ = AINetworkCalls.post(endpointKey: "main", function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (json) in
             print("post json response: \(String(describing: json))")
         }) { (json, error) in
             print("post error: \(String(describing: json))")
