@@ -7,7 +7,7 @@ import RxSwift
 
 public struct AINetworkCallsRequestModel {
     private var _path: String? = nil
-    private var _method: String? = nil
+    private var _method: AIHTTPMethod? = nil
     private var _headers: HTTPHeaders? = nil
     private var _parameters: [String : Any]? = nil
     private var _body: [String : Any]? = nil
@@ -15,7 +15,7 @@ public struct AINetworkCallsRequestModel {
     public var path: String? {
         return _path
     }
-    public var method: String? {
+    public var method: AIHTTPMethod? {
         return _method
     }
     public var headers: HTTPHeaders? {
@@ -28,7 +28,7 @@ public struct AINetworkCallsRequestModel {
         return _body
     }
     
-    internal init(withPath path: String?, method: String? = nil, headers: HTTPHeaders? = nil, parameters: [String : Any]? = nil, body: [String : Any]? = nil) {
+    internal init(withPath path: String?, method: AIHTTPMethod? = nil, headers: HTTPHeaders? = nil, parameters: [String : Any]? = nil, body: [String : Any]? = nil) {
         self._path = path
         self._method = method
         self._headers = headers
@@ -36,8 +36,8 @@ public struct AINetworkCallsRequestModel {
         self._body = body
     }
     
-    public func toJson() -> [String:Any] {
-        var data = [String:Any]()
+    public func toJson() -> [String: Any] {
+        var data = [String: Any]()
         data.safelyAdd(self.path, forKey: "path")
         data.safelyAdd(self.method, forKey: "method")
         data.safelyAdd(self.headers, forKey: "headers")
@@ -55,17 +55,17 @@ public class AINetworkCalls: NSObject {
     private static var globalSuccessCallback: ((_ response: AFDataResponse<Any>, _ fetchResult:JSON)->Void)?
     private static var glocalErrorCallBack: ((_ response: AFDataResponse<Any>, _ fetchResult:JSON?, _ error:Error?, _ errorStatusCode: Int)->Void)?
     
-    public final class func initWithEndpoints(_ endpoints: [AIEndpoint]) {
-        LifecycleVars.endpoints = endpoints
-    }
-    
-    public final class func addEndpoints(_ endpoints: [AIEndpoint]) {
-        LifecycleVars.endpoints.append(contentsOf: endpoints)
-    }
-    
-    public final class func endpoints() -> [AIEndpoint] {
-        LifecycleVars.endpoints
-    }
+//    public final class func initWithEndpoints(_ endpoints: [AIEndpoint]) {
+//        LifecycleVars.endpoints = endpoints
+//    }
+//
+//    public final class func addEndpoints(_ endpoints: [AIEndpoint]) {
+//        LifecycleVars.endpoints.append(contentsOf: endpoints)
+//    }
+//
+//    public final class func endpoints() -> [AIEndpoint] {
+//        LifecycleVars.endpoints
+//    }
     
     
     
@@ -75,10 +75,11 @@ public class AINetworkCalls: NSObject {
         return functionStr
     }
     
-    internal final class func generatePathFromFunction(endpointKey: String, function: String) -> String {
-        guard let endpoint = LifecycleVars.endpointForKey(endpointKey) else {
-            return ""
-        }
+    internal final class func generatePathFromFunction(endpoint: AIEndpoint, function: String) -> String {
+        return AINetworkCalls.generatePathFromFunction(endpoint: endpoint.rawValue, function: function)
+    }
+    
+    internal final class func generatePathFromFunction(endpoint: String, function: String) -> String {
         var path = endpoint + tidyFunction(function)
         path = path.replacingOccurrences(of: "//", with: "/")
         return path
@@ -87,19 +88,31 @@ public class AINetworkCalls: NSObject {
 
 // MARK: - Handling
 extension AINetworkCalls {
+    internal final class func handleRequest(_ requestModel: AINetworkCallsRequestModel) {
+        self.globalRequestCallback?(requestModel)
+    }
+    
     /**
      Handle Alamofire response
      
      - Author:
      Alexy
     */
-    internal final class func handleResponse(response: AFDataResponse<Any>, displayWarnings: Bool, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+    internal final class func handleResponse<T>(response: AFDataResponse<Any>, displayWarnings: Bool, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) where T : Decodable {
         switch response.result {
         case .success:
             let json = JSON.init(response.value!)
             
-            // 🌿 callback
-            successCallback?(json)
+            // 🌿 success callback
+            if T.self == JSON.self {
+                successCallback?(json as! T)
+            } else if T.self == Dictionary<String, Any>.self {
+                successCallback?(json.dictionaryObject as! T)
+            } else {
+                successCallback?(AINetworkCallsUtils.decode(model: T.self, from: json))
+            }
+            
+            // 🌿 global callback
             AINetworkCalls.globalSuccessCallback?(response, json)
         case .failure(_):
             // 🌿 json parsing

@@ -24,6 +24,8 @@ public struct AIHTTPMethod: RawRepresentable, Equatable, Hashable {
     public static let post = AIHTTPMethod(rawValue: "POST")
     /// `PUT` method.
     public static let put = AIHTTPMethod(rawValue: "PUT")
+    /// `MULTIPART` method.
+    public static let multipart = AIHTTPMethod(rawValue: "MULTIPART")
     /// `TRACE` method.
 //    public static let trace = AIHTTPMethod(rawValue: "TRACE")
 
@@ -34,20 +36,10 @@ public struct AIHTTPMethod: RawRepresentable, Equatable, Hashable {
     }
 }
 
-//public struct AIEndpoint: RawRepresentable, Equatable, Hashable {
-//    public let rawValue: String
-//
-//    public init(rawValue: String) {
-//        self.rawValue = rawValue
-//    }
-//}
-
-public struct AIEndpoint: Equatable, Hashable {
-    public let endpointKey: String
+public struct AIEndpoint: RawRepresentable, Equatable, Hashable {
     public let rawValue: String
 
-    public init(endpointKey:String, rawValue: String) {
-        self.endpointKey = endpointKey
+    public init(rawValue: String) {
         self.rawValue = rawValue
     }
 }
