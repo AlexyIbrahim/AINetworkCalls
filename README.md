@@ -46,7 +46,7 @@ AINetworkCalls.get(endpoint: .endpointName, function: "get", headers: nil, encod
 #### Rx
 
 ```swift
-AINetworkCalls.rxGet(endpoint: .main, function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (response: GetResponseModel) in
+AINetworkCalls.rxGet(endpoint: .endpointName, function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (response: GetResponseModel) in
 	print("rxGet json response: \(String(describing: response))")
 }) { (error) in
 	print("rxGet error: \(String(describing: error))")
