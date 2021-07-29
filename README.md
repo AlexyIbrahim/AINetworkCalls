@@ -33,6 +33,8 @@ extension AIEndpoint {
 
 Code:
 
+#### Callback
+
 ```swift
 AINetworkCalls.get(endpoint: .endpointName, function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (response: JSON) in
 	print("json response: \(String(describing: response))")
@@ -40,6 +42,18 @@ AINetworkCalls.get(endpoint: .endpointName, function: "get", headers: nil, encod
 	print("error json: \(String(describing: json))")
 }
 ```
+
+#### Rx
+
+```swift
+AINetworkCalls.rxGet(endpoint: .main, function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (response: GetResponseModel) in
+	print("rxGet json response: \(String(describing: response))")
+}) { (error) in
+	print("rxGet error: \(String(describing: error))")
+}.disposed(by: disposeBag)
+```
+
+
 
 ## Meta
 
