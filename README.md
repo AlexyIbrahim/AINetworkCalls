@@ -18,7 +18,7 @@ A Network calls helper library that depends on Alamofire and SwiftyJSON to provi
 You can use SPM to install `AINetworkCalls` by adding it to your `Package.swift`:
 
 ```
-.package(url: "https://github.com/AlexyIbrahim/AINetworkCalls.git", from: "1.2.2")
+.package(url: "https://gitlab.com/klevr-libraries-ios/ainetworkcalls.git", from: "1.2.4")
 ```
 
 ## Usage example

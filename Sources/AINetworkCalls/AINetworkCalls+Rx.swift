@@ -24,7 +24,7 @@ extension AINetworkCalls {
             let request = AINetworkCalls.get(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (response) in
                 single(.success(response))
             }) { (json, error) in
-                single(.error(error!))
+                single(.failure(error!))
             }
             
             return Disposables.create {
@@ -44,7 +44,7 @@ extension AINetworkCalls {
             let request = AINetworkCalls.post(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (response) in
                 single(.success(response))
             }) { (json, error) in
-                single(.error(error!))
+                single(.failure(error!))
             }
 
             return Disposables.create {
@@ -63,7 +63,7 @@ extension AINetworkCalls {
             let request = AINetworkCalls.put(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: { (response) in
                 single(.success(response))
             }) { (json, error) in
-                single(.error(error!))
+                single(.failure(error!))
             }
             
             return Disposables.create {
@@ -82,7 +82,7 @@ extension AINetworkCalls {
             let request = AINetworkCalls.multipart(fullPath: fullPath, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: { (response) in
                 single(.success(response))
             }) { (json, error) in
-                single(.error(error!))
+                single(.failure(error!))
             }
             
             return Disposables.create {
