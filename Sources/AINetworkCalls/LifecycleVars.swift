@@ -9,5 +9,11 @@
 import UIKit
 
 internal struct LifecycleVars {
-    static var endpoint: String = ""
+//    static var endpoints: [AIEndpoint] = [AIEndpoint]()
+//    
+//    static func endpointForKey(_ endpointKey: String) -> String? {
+//        return LifecycleVars.endpoints.first {
+//            $0.endpointKey == endpointKey
+//        }?.rawValue
+//    }
 }

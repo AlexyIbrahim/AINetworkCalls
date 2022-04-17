@@ -9,19 +9,20 @@
 import UIKit
 import AINetworkCalls
 
+extension AIEndpoint {
+    public static let main = AIEndpoint(rawValue: "https://postman-echo.com/")
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        AINetworkCalls.initWithEndpoint("https://postman-echo.com/")
-
-        // 🌿 Optional
+    
+        // 🌿 Optional request callback
         AINetworkCalls.setGlobalRequestCallback { (request) in
             print("request: \(String(describing: request.toJson()))")
         }
-        
         
         return true
     }

@@ -8,6 +8,7 @@
 
 import UIKit
 import Network
+import SwiftyJSON
 
 internal class AINetworkCallsUtils: NSObject {
     static let shared = AINetworkCallsUtils()
@@ -78,7 +79,42 @@ internal class AINetworkCallsUtils: NSObject {
         
         viewController?.present(alertViewController, animated: true, completion: nil)
     }
-
+    
+    internal final class func decode<T> (model: T.Type, from json: JSON) -> T where T : Decodable {
+//        print("json.stringValue: \(json.diction)")
+        let jsonData = try? JSONSerialization.data(withJSONObject: json.dictionaryObject as Any, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)!
+//        print("json string: \(jsonString)")
+        
+//        let encoder = JSONEncoder()
+//        if let jsonData = try! encoder.encode(json.dictionaryObject) {
+//            if let jsonString = String(data: jsonData, encoding: .utf8) {
+//                print(jsonString)
+//            }
+//        }
+        
+        return AINetworkCallsUtils.decode(model: model, from: jsonString)
+    }
+    
+    internal final class func decode<T> (model: T.Type, from dictionary: [String: String]) -> T where T : Decodable {
+        
+        let encoder = JSONEncoder()
+        let jsonData = try! encoder.encode(dictionary)
+        return AINetworkCallsUtils.decode(model: model, from: jsonData)
+    }
+    
+    internal final class func decode<T> (model: T.Type, from string: String) -> T where T : Decodable {
+        
+        return AINetworkCallsUtils.decode(model: model, from: string.data(using: .utf8)!)
+    }
+    
+    internal final class func decode<T> (model: T.Type, from data: Data) -> T where T : Decodable {
+        let decoder = JSONDecoder()
+        
+        print("model: \(model)")
+        let myStruct = try! decoder.decode(model, from: data)
+        return myStruct
+    }
 }
 
 internal extension Dictionary where Key == String, Value == Any {
