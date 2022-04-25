@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Welcome
 struct GetResponseModel: Codable {
-    let headers: Headers
+//    let headers: Headers
     let url: String
     let args: Args
 }

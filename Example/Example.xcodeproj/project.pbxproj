@@ -8,13 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		7B85DFAB26B03EEE00E019FB /* GetResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B85DFAA26B03EEE00E019FB /* GetResponseModel.swift */; };
-		7BAB793424F3B7BC00F99859 /* AINetworkCalls in Frameworks */ = {isa = PBXBuildFile; productRef = 7BAB793324F3B7BC00F99859 /* AINetworkCalls */; };
 		7BC72EB824F30B3500913006 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC72EB724F30B3500913006 /* AppDelegate.swift */; };
 		7BC72EBA24F30B3500913006 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC72EB924F30B3500913006 /* SceneDelegate.swift */; };
 		7BC72EBC24F30B3500913006 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC72EBB24F30B3500913006 /* ViewController.swift */; };
 		7BC72EBF24F30B3500913006 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7BC72EBD24F30B3500913006 /* Main.storyboard */; };
 		7BC72EC124F30B3600913006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7BC72EC024F30B3600913006 /* Assets.xcassets */; };
 		7BC72EC424F30B3600913006 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7BC72EC224F30B3600913006 /* LaunchScreen.storyboard */; };
+		7BCCF19428168594008564FD /* AINetworkCalls in Frameworks */ = {isa = PBXBuildFile; productRef = 7BCCF19328168594008564FD /* AINetworkCalls */; };
 		7BE4A01424F52E0000E6BCE3 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE4A01324F52E0000E6BCE3 /* MasterViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7BAB793424F3B7BC00F99859 /* AINetworkCalls in Frameworks */,
+				7BCCF19428168594008564FD /* AINetworkCalls in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,7 +102,7 @@
 			);
 			name = Example;
 			packageProductDependencies = (
-				7BAB793324F3B7BC00F99859 /* AINetworkCalls */,
+				7BCCF19328168594008564FD /* AINetworkCalls */,
 			);
 			productName = Example;
 			productReference = 7BC72EB424F30B3500913006 /* Example.app */;
@@ -363,7 +363,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		7BAB793324F3B7BC00F99859 /* AINetworkCalls */ = {
+		7BCCF19328168594008564FD /* AINetworkCalls */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AINetworkCalls;
 		};
