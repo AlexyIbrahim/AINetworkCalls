@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Sources/AINetworkCalls/**/*'
 
   s.dependency 'Alamofire', '~>5.2.2'
-  s.dependency 'RealmSwift', '~>10'
+  s.dependency 'RxSwift', '6.5.0'
+  s.dependency 'RxCocoa', '6.5.0'
   s.dependency 'SwiftyJSON', '~>5.0.0'
 end
