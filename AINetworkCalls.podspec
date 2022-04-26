@@ -12,4 +12,8 @@ Pod::Spec.new do |s|
   s.swift_version = '5.0'
 
   s.source_files = 'Sources/AINetworkCalls/**/*'
+
+  s.dependency 'Alamofire', '~>5.2.2'
+  s.dependency 'RealmSwift', '~>10'
+  s.dependency 'SwiftyJSON', '~>5.0.0'
 end
