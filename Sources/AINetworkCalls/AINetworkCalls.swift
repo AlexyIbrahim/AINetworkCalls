@@ -6,6 +6,7 @@ import RxCocoa
 import RxSwift
 
 public struct AINetworkCallsRequestModel {
+    
     private var _path: String? = nil
     private var _method: AIHTTPMethod? = nil
     private var _headers: HTTPHeaders? = nil
@@ -49,6 +50,7 @@ public struct AINetworkCallsRequestModel {
 }
 
 public class AINetworkCalls: NSObject {
+    public static var config: Config { Config.shared }
     
     internal static var globalRequestCallback: ((_ requestModel: AINetworkCallsRequestModel)->Void)?
     private static var globalUploadRequestCallback: ((_ request: UploadRequest)->Void)?
@@ -99,10 +101,22 @@ extension AINetworkCalls {
      Alexy
     */
     internal final class func handleResponse<T>(response: AFDataResponse<Any>, displayWarnings: Bool, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) where T : Decodable {
+        
         switch response.result {
         case .success:
             let json = JSON.init(response.value!)
-            
+            if Config.shared.isDebug {
+                let url = response.request?.url?.absoluteString ?? "n/a"
+                let method = response.request?.method?.rawValue ?? "n/a"
+                let headers = response.request?.headers.dictionary ?? [:]
+                print("------- \(T.self) ------- [Success]")
+                print("--- Request")
+                print("[\(method)] \(url)")
+                print("--- Headers")
+                print("\(headers.isEmpty ? "n/a" : headers.description)")
+                print("--- Response")
+                print("\(json)")
+            }
             // 🌿 success callback
             if T.self == JSON.self {
                 successCallback?(json as! T)
@@ -122,6 +136,23 @@ extension AINetworkCalls {
                     json = try JSON.init(data: data)
                 }
             } catch {
+            }
+            
+            if Config.shared.isDebug {
+                let url = response.request?.url?.absoluteString ?? "n/a"
+                let method = response.request?.method?.rawValue ?? "n/a"
+                let headers = response.request?.headers.dictionary ?? [:]
+                print("------- \(T.self) ------- [Success]")
+                print("--- Request")
+                print("[\(method)] \(url)")
+                print("--- Headers")
+                print("\(headers.isEmpty ? "n/a" : headers.description)")
+            }
+            if let json = json {
+                if Config.shared.isDebug {
+                    print("--- Response")
+                    print("\(json)")
+                }
             }
             
             // 🌿 callback
@@ -149,7 +180,13 @@ extension AINetworkCalls {
 
 // MARK: - Misc
 extension AINetworkCalls {
+    public final class func enableDebug() {
+        Config.shared.isDebug = true
+    }
     
+    public final class func disableDebug() {
+        Config.shared.isDebug = false
+    }
     
     // MARK: Callback methods
     public final class func setGlobalRequestCallback(globalRequestCallback:@escaping ((_ request: AINetworkCallsRequestModel)->Void)) {

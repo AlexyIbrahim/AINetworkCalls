@@ -111,7 +111,6 @@ internal class AINetworkCallsUtils: NSObject {
     internal final class func decode<T> (model: T.Type, from data: Data) -> T where T : Decodable {
         let decoder = JSONDecoder()
         
-        print("model: \(model)")
         let myStruct = try! decoder.decode(model, from: data)
         return myStruct
     }

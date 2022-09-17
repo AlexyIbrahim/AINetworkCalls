@@ -43,3 +43,8 @@ public struct AIEndpoint: RawRepresentable, Equatable, Hashable {
         self.rawValue = rawValue
     }
 }
+
+public struct Config {
+    public static var shared = Config()
+    public var isDebug: Bool = false
+}
