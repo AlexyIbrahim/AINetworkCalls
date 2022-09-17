@@ -50,7 +50,10 @@ public struct AINetworkCallsRequestModel {
 }
 
 public class AINetworkCalls: NSObject {
-    public static var config: Config { Config.shared }
+    public static var config: Config {
+        get { Config.shared }
+        set { Config.shared = newValue }
+    }
     
     internal static var globalRequestCallback: ((_ requestModel: AINetworkCallsRequestModel)->Void)?
     private static var globalUploadRequestCallback: ((_ request: UploadRequest)->Void)?
