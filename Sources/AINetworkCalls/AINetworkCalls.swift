@@ -112,12 +112,13 @@ extension AINetworkCalls {
                 let url = response.request?.url?.absoluteString ?? "n/a"
                 let method = response.request?.method?.rawValue ?? "n/a"
                 let headers = response.request?.headers.dictionary ?? [:]
+                let statusCode = response.response?.statusCode ?? 0
                 print("------- \(T.self) ------- [Success]")
                 print("--- Request")
                 print("[\(method)] \(url)")
                 print("--- Headers")
                 print("\(headers.isEmpty ? "n/a" : headers.description)")
-                print("--- Response")
+                print("--- Response [\(statusCode)]")
                 print("\(json)")
             }
             // 🌿 success callback
@@ -153,7 +154,8 @@ extension AINetworkCalls {
             }
             if let json = json {
                 if Config.shared.isDebug {
-                    print("--- Response")
+                    let statusCode = response.response?.statusCode ?? 0
+                    print("--- Response [\(statusCode)]")
                     print("\(json)")
                 }
             }
