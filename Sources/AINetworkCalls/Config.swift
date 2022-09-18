@@ -36,11 +36,21 @@ public struct AIHTTPMethod: RawRepresentable, Equatable, Hashable {
     }
 }
 
-public struct AIEndpoint: RawRepresentable, Equatable, Hashable {
+public struct Endpoint: RawRepresentable, Equatable, Hashable {
     public let rawValue: String
 
     public init(rawValue: String) {
         self.rawValue = rawValue
+    }
+}
+
+public struct AIEndPoint {
+    public let module: Endpoint
+    public let function: String
+    
+    public init(module: Endpoint, function: String) {
+        self.module = module
+        self.function = function
     }
 }
 

@@ -41,13 +41,47 @@ class ViewController: MasterViewController {
         */
     }
     
+    public struct PostRequest: Codable {
+        let hand: String
+    }
+
+    enum PostContract: AIServiceModule {
+        case postMethod(paramters: PostRequest)
+        
+        var method: AIHTTPMethod {
+            switch self {
+            case .postMethod: return .post
+            }
+        }
+        
+        var bodyParameters: Parameters? {
+            switch self {
+            case .postMethod(let parameters): return parameters.asDictionary()
+            }
+        }
+        
+        var endPoint: AIEndPoint {
+            switch self {
+            case .postMethod: return .init(module: .main, function: "post")
+            }
+        }
+    }
+    
     func postAPITest() {
-        let parameters = ["hand": "wave"]
-        _ = AINetworkCalls.post(endpoint: .main, function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (response: JSON) in
+        let contract = PostContract.postMethod(paramters: .init(hand: "wave"))
+        let wrapper = AIServiceWrapper.init(module: contract)
+        AIContractInterceptor.request(wrapper: wrapper) { (response: JSON) in
             print("post json response: \(String(describing: response))")
-        }) { (json, error) in
+        } errorCallback: { json, error in
             print("post error: \(String(describing: json))")
         }
+
+//        let parameters = ["hand": "wave"]
+//        _ = AINetworkCalls.post(endpoint: .main, function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (response: JSON) in
+//            print("post json response: \(String(describing: response))")
+//        }) { (json, error) in
+//            print("post error: \(String(describing: json))")
+//        }
         
         /* Using RxSwift
         AINetworkCalls.rxPost(endpoint: .main, function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (response: JSON) in

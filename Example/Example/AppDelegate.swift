@@ -9,8 +9,8 @@
 import UIKit
 import AINetworkCalls
 
-extension AIEndpoint {
-    public static let main = AIEndpoint(rawValue: "https://postman-echo.com/")
+extension Endpoint {
+    public static let main = Endpoint(rawValue: "https://postman-echo.com/")
 }
 
 @UIApplicationMain
@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
-        AINetworkCalls.config.isDebug = false
+        AINetworkCalls.config.isDebug = true
         
         // 🌿 Optional request callback
         AINetworkCalls.setGlobalRequestCallback { (request) in

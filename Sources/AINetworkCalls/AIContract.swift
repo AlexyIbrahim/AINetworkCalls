@@ -1,0 +1,112 @@
+//
+//  File.swift
+//  
+//
+//  Created by Alexy Ibrahim on 9/18/22.
+//
+
+import Foundation
+import Alamofire
+import SwiftyJSON
+
+
+public typealias Headers = HTTPHeaders
+public typealias Parameters = [String: Any]
+
+public enum Module: String {
+    case sandbox
+    case staging
+    case production
+}
+
+
+
+public protocol AIServiceModule {
+    var method: AIHTTPMethod { get }
+    var bodyParameters: Parameters? { get }
+    var queryParameters: Parameters? { get }
+    var endPoint: AIEndPoint { get }
+    var headers: HTTPHeaders? { get }
+    var timeout: TimeInterval { get }
+    func url(baseUrl: URL?) -> URL?
+}
+
+public extension AIServiceModule {
+    var method: AIHTTPMethod { .get }
+    var bodyParameters: Parameters? { nil }
+    var timeout: TimeInterval { 60 }
+    var queryParameters: Parameters? { nil }
+    var headers: HTTPHeaders? { nil }
+}
+
+extension AIServiceModule {
+
+    public func url(baseUrl: URL?) -> URL? {
+        
+        var url = baseUrl
+        
+        url?.appendPathComponent("/\(endPoint.module.rawValue)")
+        
+        guard let urlString = url?.absoluteString.removingPercentEncoding else { return url }
+        return URL(string: urlString)
+    }
+}
+
+public class AIServiceWrapper {
+
+    private (set) var serviceContract: AIServiceModule
+    
+    public init(module: AIServiceModule) {
+        serviceContract = module
+    }
+}
+
+extension AIServiceWrapper {
+    
+    var defaultParameters: Parameters? { return nil }
+
+    var queryParameters: Parameters? { serviceContract.queryParameters }
+    
+    var bodyParameters: Parameters? { serviceContract.bodyParameters }
+    
+    var method: AIHTTPMethod { serviceContract.method }
+    
+    var url: URL? { serviceContract.url(baseUrl: serviceContract.url(baseUrl: .init(string: "baseUrl"))) }
+    
+    var timeout: TimeInterval { serviceContract.timeout }
+    
+    var headers: HTTPHeaders? { serviceContract.headers }
+    
+    var endPoint: AIEndPoint { serviceContract.endPoint }
+    
+    public var jsonString: String? {
+        guard let params = bodyParameters else { return nil }
+        if #available(iOS 13.0, *) {
+            if method != .get,
+               let data = try? JSONSerialization.data(withJSONObject: params, options: [.withoutEscapingSlashes, .sortedKeys]) {
+                return String(data: data, encoding: .utf8)
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+        return nil
+    }
+}
+
+public typealias GenericClosure<T> = (T) -> Void
+
+public class AIContractInterceptor {
+    public final class func request<T: Decodable>(wrapper: AIServiceWrapper, successCallback: @escaping GenericClosure<T>, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+        AINetworkCalls.manager.sessionConfiguration.timeoutIntervalForRequest = wrapper.timeout
+        
+        _ = AINetworkCalls.request(httpMethod: wrapper.method,
+                                   endpoint: wrapper.endPoint.module,
+                                   function: wrapper.endPoint.function,
+                                   headers: wrapper.headers,
+                                   urlEncoding: nil,
+                                   jsonEncoding: nil,
+                                   queryParameters: wrapper.queryParameters,
+                                   bodyParameters: wrapper.bodyParameters,
+                                   displayWarnings: false, successCallback: successCallback, errorCallback: errorCallback)
+    }
+}

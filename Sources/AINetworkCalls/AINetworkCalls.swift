@@ -50,6 +50,12 @@ public struct AINetworkCallsRequestModel {
 }
 
 public class AINetworkCalls: NSObject {
+    
+    internal static var manager: Alamofire.Session = {
+        let session = Session.init()
+        return session
+    }()
+    
     public static var config: Config {
         get { Config.shared }
         set { Config.shared = newValue }
@@ -80,7 +86,7 @@ public class AINetworkCalls: NSObject {
         return functionStr
     }
     
-    internal final class func generatePathFromFunction(endpoint: AIEndpoint, function: String) -> String {
+    internal final class func generatePathFromFunction(endpoint: Endpoint, function: String) -> String {
         return AINetworkCalls.generatePathFromFunction(endpoint: endpoint.rawValue, function: function)
     }
     
@@ -113,9 +119,17 @@ extension AINetworkCalls {
                 let method = response.request?.method?.rawValue ?? "n/a"
                 let headers = response.request?.headers.dictionary ?? [:]
                 let statusCode = response.response?.statusCode ?? 0
+                var body: String? = nil
+                if let jsonData = response.request?.httpBody {
+                    if let jsonString = String(data: jsonData, encoding: .utf8) {
+                        body = jsonString
+                    }
+                }
                 print("------- \(T.self) ------- [Success]")
                 print("--- Request")
                 print("[\(method)] \(url)")
+                print("--- Body")
+                print("\(body ?? "n/a")")
                 print("--- Headers")
                 print("\(headers.isEmpty ? "n/a" : headers.description)")
                 print("--- Response [\(statusCode)]")
@@ -146,9 +160,17 @@ extension AINetworkCalls {
                 let url = response.request?.url?.absoluteString ?? "n/a"
                 let method = response.request?.method?.rawValue ?? "n/a"
                 let headers = response.request?.headers.dictionary ?? [:]
+                var body: String? = nil
+                if let jsonData = response.request?.httpBody {
+                    if let jsonString = String(data: jsonData, encoding: .utf8) {
+                        body = jsonString
+                    }
+                }
                 print("------- \(T.self) ------- [Success]")
                 print("--- Request")
                 print("[\(method)] \(url)")
+                print("--- Body")
+                print("\(body ?? "n/a")")
                 print("--- Headers")
                 print("\(headers.isEmpty ? "n/a" : headers.description)")
             }

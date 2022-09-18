@@ -15,7 +15,7 @@ import RxSwift
 extension AINetworkCalls {
     
     // MARK: GET
-    public final class func rxGet<T: Decodable>(endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<T> {
+    public final class func rxGet<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<T> {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.rxGet(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
     }
@@ -34,7 +34,7 @@ extension AINetworkCalls {
     }
     
     // MARK: POST
-    public final class func rxPost<T: Decodable>(endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<T> {
+    public final class func rxPost<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<T> {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.rxPost(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
     }
@@ -54,7 +54,7 @@ extension AINetworkCalls {
     }
     
     // MARK: PUT
-    public final class func rxPut<T: Decodable>(endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<T> {
+    public final class func rxPut<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false) -> Single<T> {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.rxPut(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings)
     }
@@ -73,7 +73,7 @@ extension AINetworkCalls {
     }
     
     // MARK: MULTIPART
-    public final class func rxMultipart<T: Decodable>(endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> Single<T> {
+    public final class func rxMultipart<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult:JSON) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> Single<T> {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.rxMultipart(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: successCallback, errorCallback: errorCallback)
     }

@@ -13,22 +13,22 @@ import SwiftyJSON
 // MARK: - Alamofire
 extension AINetworkCalls {
     
-    public final class func request<T: Decodable>(httpMethod: AIHTTPMethod, endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, urlEncoding: URLEncoding? = nil, jsonEncoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, body: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil)  -> DataRequest? {
+    public final class func request<T: Decodable>(httpMethod: AIHTTPMethod, endpoint: Endpoint, function: String, headers:HTTPHeaders?, urlEncoding: URLEncoding? = nil, jsonEncoding: JSONEncoding? = nil, queryParameters: [String: Any]? = nil, bodyParameters: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil)  -> DataRequest? {
         
         switch httpMethod {
         case .get:
-            return AINetworkCalls.get(endpoint: endpoint, function: function, headers: headers, encoding: urlEncoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
+            return AINetworkCalls.get(endpoint: endpoint, function: function, headers: headers, encoding: urlEncoding, parameters: queryParameters, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
         case .post:
-            return AINetworkCalls.post(endpoint: endpoint, function: function, headers: headers, encoding: jsonEncoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
+            return AINetworkCalls.post(endpoint: endpoint, function: function, headers: headers, encoding: jsonEncoding, parameters: bodyParameters, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
         case .put:
-            return AINetworkCalls.put(endpoint: endpoint, function: function, headers: headers, encoding: jsonEncoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
+            return AINetworkCalls.put(endpoint: endpoint, function: function, headers: headers, encoding: jsonEncoding, parameters: bodyParameters, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
         default:
             return nil
         }
     }
     
     // MARK: GET
-    public final class func get<T: Decodable>(endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func get<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.get(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
     }
@@ -40,7 +40,7 @@ extension AINetworkCalls {
             
             AINetworkCalls.handleRequest(AINetworkCallsRequestModel.init(withPath: fullPath, method: .get, headers: headers, parameters: parameters))
             
-            let request = AF.request(fullPath, method: HTTPMethod.get, parameters: parameters, encoding: encoding ?? .queryString, headers: headers).validate(statusCode: 200..<300)
+            let request = manager.request(fullPath, method: HTTPMethod.get, parameters: parameters, encoding: encoding ?? .queryString, headers: headers).validate(statusCode: 200..<300)
                 .responseJSON { response in
                     AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
             }
@@ -50,7 +50,7 @@ extension AINetworkCalls {
     }
     
     // MARK: POST
-    public final class func post<T: Decodable>(endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func post<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.post(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
     }
@@ -62,7 +62,7 @@ extension AINetworkCalls {
             
             AINetworkCalls.handleRequest(AINetworkCallsRequestModel.init(withPath: fullPath, method: .post, headers: headers, body: parameters))
             
-            let request = AF.request(fullPath, method: HTTPMethod.post, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200..<300)
+            let request = manager.request(fullPath, method: HTTPMethod.post, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200..<300)
                 .responseJSON { response in
                     AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
             }
@@ -72,7 +72,7 @@ extension AINetworkCalls {
     }
     
     // MARK: PUT
-    public final class func put<T: Decodable>(endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func put<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.put(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
     }
@@ -84,7 +84,7 @@ extension AINetworkCalls {
             
             AINetworkCalls.handleRequest(AINetworkCallsRequestModel.init(withPath: fullPath, method: .put, headers: headers, body: parameters))
             
-            let request = AF.request(fullPath, method: HTTPMethod.put, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200..<300)
+            let request = manager.request(fullPath, method: HTTPMethod.put, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200..<300)
                 .responseJSON { response in
                     AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
             }
@@ -94,7 +94,7 @@ extension AINetworkCalls {
     }
     
     // MARK: MULTIPART
-    public final class func multipart<T: Decodable>(endpoint: AIEndpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> UploadRequest? {
+    public final class func multipart<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> UploadRequest? {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         
         return AINetworkCalls.multipart(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: successCallback, errorCallback: errorCallback)
@@ -108,7 +108,7 @@ extension AINetworkCalls {
             
             AINetworkCalls.handleRequest(AINetworkCallsRequestModel.init(withPath: fullPath, method: .multipart, headers: headers, body: parameters))
             
-            let request = AF.upload(multipartFormData: { multiPart in
+            let request = manager.upload(multipartFormData: { multiPart in
                 multipartCallback?(multiPart)
                 parameters.forEach {
                     if $0.value is UIImage {
