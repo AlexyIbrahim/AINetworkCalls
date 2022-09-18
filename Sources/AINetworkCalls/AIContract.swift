@@ -25,7 +25,7 @@ public protocol AIServiceModule {
     var method: AIHTTPMethod { get }
     var bodyParameters: Parameters? { get }
     var queryParameters: Parameters? { get }
-    var endPoint: AIEndPoint { get }
+    var aiEndPoint: AIEndPoint { get }
     var headers: HTTPHeaders? { get }
     var timeout: TimeInterval { get }
     func url(baseUrl: URL?) -> URL?
@@ -45,7 +45,7 @@ extension AIServiceModule {
         
         var url = baseUrl
         
-        url?.appendPathComponent("/\(endPoint.module.rawValue)")
+        url?.appendPathComponent("/\(aiEndPoint.function)")
         
         guard let urlString = url?.absoluteString.removingPercentEncoding else { return url }
         return URL(string: urlString)
@@ -71,13 +71,13 @@ extension AIServiceWrapper {
     
     var method: AIHTTPMethod { serviceContract.method }
     
-    var url: URL? { serviceContract.url(baseUrl: serviceContract.url(baseUrl: .init(string: "baseUrl"))) }
+    var url: URL? { serviceContract.url(baseUrl: serviceContract.url(baseUrl: .init(string: serviceContract.aiEndPoint.endpoint.rawValue))) }
     
     var timeout: TimeInterval { serviceContract.timeout }
     
     var headers: HTTPHeaders? { serviceContract.headers }
     
-    var endPoint: AIEndPoint { serviceContract.endPoint }
+    var aiEndPoint: AIEndPoint { serviceContract.aiEndPoint }
     
     public var jsonString: String? {
         guard let params = bodyParameters else { return nil }
@@ -100,8 +100,8 @@ public class AIContractInterceptor {
         AINetworkCalls.manager.sessionConfiguration.timeoutIntervalForRequest = wrapper.timeout
         
         _ = AINetworkCalls.request(httpMethod: wrapper.method,
-                                   endpoint: wrapper.endPoint.module,
-                                   function: wrapper.endPoint.function,
+                                   endpoint: wrapper.aiEndPoint.endpoint,
+                                   function: wrapper.aiEndPoint.function,
                                    headers: wrapper.headers,
                                    urlEncoding: nil,
                                    jsonEncoding: nil,

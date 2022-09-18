@@ -10,6 +10,7 @@ import UIKit
 import AINetworkCalls
 import RxSwift
 import SwiftyJSON
+import Alamofire
 
 
 class ViewController: MasterViewController {
@@ -60,7 +61,7 @@ class ViewController: MasterViewController {
             }
         }
         
-        var endPoint: AIEndPoint {
+        var aiEndPoint: AIEndPoint {
             switch self {
             case .postMethod: return .init(module: .main, function: "post")
             }
@@ -91,7 +92,5 @@ class ViewController: MasterViewController {
         }.disposed(by: disposeBag)
          */
     }
-
-
 }
 

@@ -45,11 +45,11 @@ public struct Endpoint: RawRepresentable, Equatable, Hashable {
 }
 
 public struct AIEndPoint {
-    public let module: Endpoint
+    public let endpoint: Endpoint
     public let function: String
     
     public init(module: Endpoint, function: String) {
-        self.module = module
+        self.endpoint = module
         self.function = function
     }
 }

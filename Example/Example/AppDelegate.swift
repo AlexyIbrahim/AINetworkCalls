@@ -11,6 +11,7 @@ import AINetworkCalls
 
 extension Endpoint {
     public static let main = Endpoint(rawValue: "https://postman-echo.com/")
+    public static let sandbox = Endpoint(rawValue: "https://dev.shelvz.com/MerchandiserServer/mvc")
 }
 
 @UIApplicationMain
