@@ -109,4 +109,9 @@ public class AIContractInterceptor {
                                    bodyParameters: wrapper.bodyParameters,
                                    displayWarnings: false, successCallback: successCallback, errorCallback: errorCallback)
     }
+    
+    public final class func request<T: Decodable>(contract: AIServiceModule, successCallback: GenericClosure<T>? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+        let wrapper = AIServiceWrapper(module: contract)
+        AIContractInterceptor.request(wrapper: wrapper, successCallback: successCallback, errorCallback: errorCallback)
+    }
 }
