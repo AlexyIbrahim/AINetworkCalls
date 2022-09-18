@@ -96,7 +96,7 @@ extension AIServiceWrapper {
 public typealias GenericClosure<T> = (T) -> Void
 
 public class AIContractInterceptor {
-    public final class func request<T: Decodable>(wrapper: AIServiceWrapper, successCallback: @escaping GenericClosure<T>, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+    public final class func request<T: Decodable>(wrapper: AIServiceWrapper, successCallback: GenericClosure<T>? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
         AINetworkCalls.manager.sessionConfiguration.timeoutIntervalForRequest = wrapper.timeout
         
         _ = AINetworkCalls.request(httpMethod: wrapper.method,
