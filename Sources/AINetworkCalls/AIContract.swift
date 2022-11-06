@@ -93,10 +93,12 @@ extension AIServiceWrapper {
     }
 }
 
-public typealias GenericClosure<T> = (T) -> Void
+public typealias GenericSuccessClosure<T> = (_ fetchResult: T) -> Void
+public typealias GenericErrorClosure = (_ fetchResult:JSON?, _ error:Error?) -> Void
+public typealias VoidClosure = () -> Void
 
 public class AIContractInterceptor {
-    public final class func request<T: Decodable>(wrapper: AIServiceWrapper, successCallback: GenericClosure<T>? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+    public final class func request<T: Decodable>(wrapper: AIServiceWrapper, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) {
         AINetworkCalls.manager.sessionConfiguration.timeoutIntervalForRequest = wrapper.timeout
         
         _ = AINetworkCalls.request(httpMethod: wrapper.method,
@@ -110,7 +112,7 @@ public class AIContractInterceptor {
                                    displayWarnings: false, successCallback: successCallback, errorCallback: errorCallback)
     }
     
-    public final class func request<T: Decodable>(contract: AIServiceModule, successCallback: GenericClosure<T>? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) {
+    public final class func request<T: Decodable>(contract: AIServiceModule, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) {
         let wrapper = AIServiceWrapper(module: contract)
         AIContractInterceptor.request(wrapper: wrapper, successCallback: successCallback, errorCallback: errorCallback)
     }

@@ -109,7 +109,7 @@ extension AINetworkCalls {
      - Author:
      Alexy
     */
-    internal final class func handleResponse<T>(response: AFDataResponse<Any>, displayWarnings: Bool, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) where T : Decodable {
+    internal final class func handleResponse<T>(response: AFDataResponse<Any>, displayWarnings: Bool, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) where T : Decodable {
         
         switch response.result {
         case .success:

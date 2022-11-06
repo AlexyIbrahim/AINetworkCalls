@@ -13,7 +13,7 @@ import SwiftyJSON
 // MARK: - Alamofire
 extension AINetworkCalls {
     
-    public final class func request<T: Decodable>(httpMethod: AIHTTPMethod, endpoint: Endpoint, function: String, headers:HTTPHeaders?, urlEncoding: URLEncoding? = nil, jsonEncoding: JSONEncoding? = nil, queryParameters: [String: Any]? = nil, bodyParameters: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil)  -> DataRequest? {
+    public final class func request<T: Decodable>(httpMethod: AIHTTPMethod, endpoint: Endpoint, function: String, headers:HTTPHeaders?, urlEncoding: URLEncoding? = nil, jsonEncoding: JSONEncoding? = nil, queryParameters: [String: Any]? = nil, bodyParameters: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil)  -> DataRequest? {
         
         switch httpMethod {
         case .get:
@@ -28,11 +28,11 @@ extension AINetworkCalls {
     }
     
     // MARK: GET
-    public final class func get<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func get<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.get(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
     }
-    public final class func get<T: Decodable>(fullPath: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func get<T: Decodable>(fullPath: String, headers:HTTPHeaders?, encoding: URLEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult:T) -> ())? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
             let headers: HTTPHeaders? = headers
 
@@ -50,11 +50,11 @@ extension AINetworkCalls {
     }
     
     // MARK: POST
-    public final class func post<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func post<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.post(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
     }
-    public final class func post<T: Decodable>(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func post<T: Decodable>(fullPath:String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
             let headers: HTTPHeaders? = headers
             
@@ -72,11 +72,11 @@ extension AINetworkCalls {
     }
     
     // MARK: PUT
-    public final class func put<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func put<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         return AINetworkCalls.put(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, successCallback: successCallback, errorCallback: errorCallback)
     }
-    public final class func put<T: Decodable>(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> DataRequest? {
+    public final class func put<T: Decodable>(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
             let headers: HTTPHeaders? = headers
             
@@ -94,12 +94,12 @@ extension AINetworkCalls {
     }
     
     // MARK: MULTIPART
-    public final class func multipart<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> UploadRequest? {
+    public final class func multipart<T: Decodable>(endpoint: Endpoint, function: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> UploadRequest? {
         let path = AINetworkCalls.generatePathFromFunction(endpoint: endpoint, function: function)
         
         return AINetworkCalls.multipart(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, multipartCallback: multipartCallback, progressCallback: progressCallback, successCallback: successCallback, errorCallback: errorCallback)
     }
-    public final class func multipart<T: Decodable>(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: ((_ fetchResult: T) -> ())? = nil, errorCallback: ((_ fetchResult:JSON?, _ error:Error?) -> ())? = nil) -> UploadRequest? {
+    public final class func multipart<T: Decodable>(fullPath: String, headers:HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, multipartCallback: ((_ multipart:MultipartFormData) -> ())? = nil, progressCallback: ((_ fractionCompleted:Double) -> ())? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> UploadRequest? {
         if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
             
             let headers: HTTPHeaders? = headers
