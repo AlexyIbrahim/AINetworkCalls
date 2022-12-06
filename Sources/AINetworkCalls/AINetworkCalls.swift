@@ -51,7 +51,7 @@ public struct AINetworkCallsRequestModel {
 
 public class AINetworkCalls: NSObject {
     
-    internal static var manager: Alamofire.Session = {
+    public static var manager: Alamofire.Session = {
         let session = Session.init()
         return session
     }()
