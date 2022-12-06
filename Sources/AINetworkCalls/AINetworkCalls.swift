@@ -51,9 +51,20 @@ public struct AINetworkCallsRequestModel {
 
 public class AINetworkCalls: NSObject {
     
-    public static var manager: Alamofire.Session = {
-        let session = Session.init()
-        return session
+    private static var localManager: Alamofire.Session?
+    
+    public static func initManager(interceptor: RequestInterceptor? = nil) -> Alamofire.Session {
+        localManager = Session.init(interceptor: interceptor)
+        return localManager!
+    }
+    
+    internal static var manager: Alamofire.Session = {
+        if let localManager = localManager {
+            return localManager
+        } else {
+            localManager = Session.init()
+            return localManager!
+        }
     }()
     
     public static var config: Config {
@@ -84,6 +95,7 @@ public class AINetworkCalls: NSObject {
         var functionStr: String = (function.hasPrefix("/") ? function : "/\(function)")
         functionStr = function.replacingOccurrences(of: "//", with: "/")
         return functionStr
+//        AINetworkCalls.manager.interceptor = RequestInterceptor()
     }
     
     internal final class func generatePathFromFunction(endpoint: Endpoint, function: String) -> String {
