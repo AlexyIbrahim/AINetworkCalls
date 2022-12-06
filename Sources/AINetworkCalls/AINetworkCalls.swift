@@ -53,9 +53,8 @@ public class AINetworkCalls: NSObject {
     
     private static var localManager: Alamofire.Session?
     
-    public static func initManager(interceptor: RequestInterceptor? = nil) -> Alamofire.Session {
+    public static func initManager(interceptor: RequestInterceptor? = nil) {
         localManager = Session.init(interceptor: interceptor)
-        return localManager!
     }
     
     internal static var manager: Alamofire.Session = {
