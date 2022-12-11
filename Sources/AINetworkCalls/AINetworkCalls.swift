@@ -144,9 +144,9 @@ extension AINetworkCalls {
                 print("--- Headers")
                 print("\(headers.isEmpty ? "n/a" : headers.description)")
                 print("--- Response [\(statusCode)]")
-                var response: String = ""
+                var response: String = "\(json)"
                 if Config.shared.trimLongResponse {
-                    response = AINetworkCallsUtils.truncate(str: json.stringValue, length: Config.shared.longResponseCharLimit)
+                    response = AINetworkCallsUtils.truncate(str: response, length: Config.shared.longResponseCharLimit)
                 }
                 print("\(response)")
             }
@@ -193,7 +193,7 @@ extension AINetworkCalls {
                     print("--- Response [\(statusCode)]")
                     var response: String = ""
                     if Config.shared.trimLongResponse {
-                        response = AINetworkCallsUtils.truncate(str: json.stringValue, length: Config.shared.longResponseCharLimit)
+                        response = AINetworkCallsUtils.truncate(str: response, length: Config.shared.longResponseCharLimit)
                     }
                     print("\(response)")
                 }
