@@ -191,7 +191,7 @@ extension AINetworkCalls {
                 if let json = json {
                     let statusCode = response.response?.statusCode ?? 0
                     print("--- Response [\(statusCode)]")
-                    var response: String = ""
+                    var response: String = "\(json)"
                     if Config.shared.trimLongResponse {
                         response = AINetworkCallsUtils.truncate(str: response, length: Config.shared.longResponseCharLimit)
                     }
