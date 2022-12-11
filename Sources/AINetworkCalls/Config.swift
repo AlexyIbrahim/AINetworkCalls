@@ -57,4 +57,6 @@ public struct AIEndPoint {
 public struct Config {
     public static var shared = Config()
     public var isDebug: Bool = false
+    public var trimLongResponse: Bool = false
+    public var longResponseCharLimit = 256
 }

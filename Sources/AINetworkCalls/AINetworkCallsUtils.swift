@@ -114,6 +114,17 @@ internal class AINetworkCallsUtils: NSObject {
         let myStruct = try! decoder.decode(model, from: data)
         return myStruct
     }
+    
+    internal final class func truncate(str: String, length: Int, trailing: String = "…") -> String {
+        if (str.count <= length) {
+          return str
+        }
+        var truncated = str.prefix(length)
+        while truncated.last != " " {
+          truncated = truncated.dropLast()
+        }
+        return truncated + trailing
+    }
 }
 
 internal extension Dictionary where Key == String, Value == Any {

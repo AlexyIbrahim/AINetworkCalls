@@ -144,7 +144,11 @@ extension AINetworkCalls {
                 print("--- Headers")
                 print("\(headers.isEmpty ? "n/a" : headers.description)")
                 print("--- Response [\(statusCode)]")
-                print("\(json)")
+                var response: String = ""
+                if Config.shared.trimLongResponse {
+                    response = AINetworkCallsUtils.truncate(str: json.stringValue, length: Config.shared.longResponseCharLimit)
+                }
+                print("\(response)")
             }
             // 🌿 success callback
             if T.self == JSON.self {
@@ -184,12 +188,14 @@ extension AINetworkCalls {
                 print("\(body ?? "n/a")")
                 print("--- Headers")
                 print("\(headers.isEmpty ? "n/a" : headers.description)")
-            }
-            if let json = json {
-                if Config.shared.isDebug {
+                if let json = json {
                     let statusCode = response.response?.statusCode ?? 0
                     print("--- Response [\(statusCode)]")
-                    print("\(json)")
+                    var response: String = ""
+                    if Config.shared.trimLongResponse {
+                        response = AINetworkCallsUtils.truncate(str: json.stringValue, length: Config.shared.longResponseCharLimit)
+                    }
+                    print("\(response)")
                 }
             }
             
