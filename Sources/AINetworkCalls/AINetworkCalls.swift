@@ -4,6 +4,7 @@ import Alamofire
 import SwiftyJSON
 import RxCocoa
 import RxSwift
+import ProgressHUD
 
 public struct AINetworkCallsRequestModel {
     
@@ -110,7 +111,10 @@ public class AINetworkCalls: NSObject {
 
 // MARK: - Handling
 extension AINetworkCalls {
-    internal final class func handleRequest(_ requestModel: AINetworkCallsRequestModel) {
+    internal final class func handleRequest(_ requestModel: AINetworkCallsRequestModel, handleProgress: Bool? = nil) {
+        if handleProgress ?? Config.shared.handleProgress {
+            ProgressHUD.show(interaction: false)
+        }
         self.globalRequestCallback?(requestModel)
     }
     
@@ -120,10 +124,14 @@ extension AINetworkCalls {
      - Author:
      Alexy
     */
-    internal final class func handleResponse<T>(response: AFDataResponse<Any>, displayWarnings: Bool, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) where T : Decodable {
+    internal final class func handleResponse<T>(response: AFDataResponse<Any>, displayWarnings: Bool, handleProgress: Bool? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) where T : Decodable {
         
         switch response.result {
         case .success:
+            if handleProgress ?? Config.shared.handleProgress {
+                ProgressHUD.dismiss()
+            }
+            
             let json = JSON.init(response.value!)
             if Config.shared.isDebug {
                 let url = response.request?.url?.absoluteString ?? "n/a"
@@ -162,6 +170,10 @@ extension AINetworkCalls {
             // 🌿 global callback
             AINetworkCalls.globalSuccessCallback?(response, json)
         case .failure(_):
+            if handleProgress ?? Config.shared.handleProgress {
+                AINetworkCalls.handleError(response.error, errorCode: response.response?.statusCode ?? 0)
+            }
+            
             // 🌿 json parsing
             var json: JSON? = nil
             do {
@@ -202,21 +214,19 @@ extension AINetworkCalls {
             // 🌿 callback
             errorCallback?(json ?? nil, response.error)
             AINetworkCalls.glocalErrorCallBack?(response, json ?? nil, response.error, response.response?.statusCode ?? 0)
-            // 🌿 warning errors
-            if displayWarnings {AINetworkCalls.handleError(response.error, errorCode: response.response?.statusCode ?? 0)}
         }
     }
     
     final private class func handleError(_ error: Error?, errorCode:Int? = nil, fetchResult: [String: Any]? = nil) {
         switch errorCode {
         case URLError.Code.timedOut.rawValue:
-            AINetworkCallsUtils.displayMessage("Request Timeout")
+            ProgressHUD.showFailed("Request Timeout", interaction: false)
         case URLError.Code.cannotParseResponse.rawValue:
-            AINetworkCallsUtils.displayMessage("Could not parse response")
+            ProgressHUD.showFailed("Could not parse response", interaction: false)
         case URLError.Code.badServerResponse.rawValue:
-            AINetworkCallsUtils.displayMessage("Server is temporarily unavailable")
+            ProgressHUD.showFailed("Server is temporarily unavailable", interaction: false)
         default:
-            AINetworkCallsUtils.displayMessage("Error")
+            ProgressHUD.showFailed(error?.localizedDescription, interaction: false)
         }
     }
 }

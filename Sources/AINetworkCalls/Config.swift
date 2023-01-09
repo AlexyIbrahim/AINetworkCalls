@@ -59,4 +59,5 @@ public struct Config {
     public var isDebug: Bool = false
     public var trimLongResponse: Bool = false
     public var longResponseCharLimit = 256
+    public var handleProgress: Bool = false
 }

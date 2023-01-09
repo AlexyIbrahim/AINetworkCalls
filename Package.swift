@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "AINetworkCalls",
     platforms: [
-        .iOS(.v12)
+        .iOS(.v13)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
@@ -19,13 +19,17 @@ let package = Package(
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.6.1"),
         .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.1"),
         .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.5.0"),
+        .package(url: "https://github.com/relatedcode/ProgressHUD.git", from: "13.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "AINetworkCalls",
-            dependencies: ["Alamofire", "SwiftyJSON", .product(name: "RxCocoa", package: "RxSwift")]),
+            dependencies: ["Alamofire",
+                           "SwiftyJSON",
+                           .product(name: "RxCocoa", package: "RxSwift"),
+                           .product(name: "ProgressHUD", package: "ProgressHUD"),]),
         .testTarget(
             name: "AINetworkCallsTests",
             dependencies: ["AINetworkCalls"]),
