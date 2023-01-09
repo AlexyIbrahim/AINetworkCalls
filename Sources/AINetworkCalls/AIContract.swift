@@ -109,7 +109,10 @@ public class AIContractInterceptor {
                                    jsonEncoding: nil,
                                    queryParameters: wrapper.queryParameters,
                                    bodyParameters: wrapper.bodyParameters,
-                                   displayWarnings: false, successCallback: successCallback, errorCallback: errorCallback)
+                                   displayWarnings: false,
+                                   handleProgress: nil,
+                                   successCallback: successCallback,
+                                   errorCallback: errorCallback)
     }
     
     public final class func request<T: Decodable>(contract: AIServiceModule, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) {
