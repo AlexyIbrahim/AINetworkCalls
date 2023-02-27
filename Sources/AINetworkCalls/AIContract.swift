@@ -28,6 +28,7 @@ public protocol AIServiceModule {
     var aiEndPoint: AIEndPoint { get }
     var headers: HTTPHeaders? { get }
     var timeout: TimeInterval { get }
+    var handleProgress: Bool? { get }
     func url(baseUrl: URL?) -> URL?
 }
 
@@ -37,6 +38,7 @@ public extension AIServiceModule {
     var timeout: TimeInterval { 60 }
     var queryParameters: Parameters? { nil }
     var headers: HTTPHeaders? { nil }
+    var handleProgress: Bool? { nil }
 }
 
 extension AIServiceModule {
@@ -79,6 +81,8 @@ extension AIServiceWrapper {
     
     var aiEndPoint: AIEndPoint { serviceContract.aiEndPoint }
     
+    var handleProgress: Bool? { serviceContract.handleProgress }
+    
     public var jsonString: String? {
         guard let params = bodyParameters else { return nil }
         if #available(iOS 13.0, *) {
@@ -110,7 +114,7 @@ public class AIContractInterceptor {
                                    queryParameters: wrapper.queryParameters,
                                    bodyParameters: wrapper.bodyParameters,
                                    displayWarnings: false,
-                                   handleProgress: nil,
+                                   handleProgress: wrapper.handleProgress,
                                    successCallback: successCallback,
                                    errorCallback: errorCallback)
     }
