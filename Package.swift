@@ -16,9 +16,8 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.6.1"),
-        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.1"),
-        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.5.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
+        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.0"),
         .package(url: "https://github.com/relatedcode/ProgressHUD.git", from: "13.0.0"),
     ],
     targets: [
@@ -28,7 +27,6 @@ let package = Package(
             name: "AINetworkCalls",
             dependencies: ["Alamofire",
                            "SwiftyJSON",
-                           .product(name: "RxCocoa", package: "RxSwift"),
                            .product(name: "ProgressHUD", package: "ProgressHUD"),]),
         .testTarget(
             name: "AINetworkCallsTests",
