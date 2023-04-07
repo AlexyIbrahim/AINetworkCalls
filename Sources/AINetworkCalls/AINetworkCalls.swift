@@ -2,8 +2,6 @@ import Foundation
 import UIKit
 import Alamofire
 import SwiftyJSON
-import RxCocoa
-import RxSwift
 import ProgressHUD
 
 public struct AINetworkCallsRequestModel {
