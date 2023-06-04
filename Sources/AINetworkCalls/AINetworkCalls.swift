@@ -145,10 +145,10 @@ extension AINetworkCalls {
                 print("------- \(T.self) ------- [Success]")
                 print("--- Request")
                 print("[\(method)] \(url)")
-                print("--- Body")
-                print("\(body ?? "n/a")")
                 print("--- Headers")
                 print("\(headers.isEmpty ? "n/a" : headers.description)")
+                print("--- Body")
+                print("\(body ?? "n/a")")
                 print("--- Response [\(statusCode)]")
                 var response: String = "\(json)"
                 if Config.shared.trimLongResponse {
@@ -194,10 +194,10 @@ extension AINetworkCalls {
                 print("------- \(T.self) ------- [Success]")
                 print("--- Request")
                 print("[\(method)] \(url)")
-                print("--- Body")
-                print("\(body ?? "n/a")")
                 print("--- Headers")
                 print("\(headers.isEmpty ? "n/a" : headers.description)")
+                print("--- Body")
+                print("\(body ?? "n/a")")
                 if let json = json {
                     let statusCode = response.response?.statusCode ?? 0
                     print("--- Response [\(statusCode)]")
