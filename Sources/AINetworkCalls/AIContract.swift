@@ -137,4 +137,17 @@ public class AIContractInterceptor {
 			})
 		}
 	}
+	
+	public final class func request<T: Decodable>(on dispatchQueue: DispatchQueue, contract: AIServiceModule, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> Promise<T> {
+		return Promise(on: dispatchQueue, { valueCallback, errorCallback in
+			let wrapper = AIServiceWrapper(module: contract)
+			AIContractInterceptor.request(wrapper: wrapper, successCallback: { fetchResult in
+				valueCallback(fetchResult)
+			}, errorCallback: { fetchResult, error in
+				if let error = error {
+					errorCallback(error)
+				}
+			})
+		})
+	}
 }
