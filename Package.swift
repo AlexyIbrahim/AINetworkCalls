@@ -19,6 +19,7 @@ let package = Package(
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
         .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.0"),
         .package(url: "https://github.com/relatedcode/ProgressHUD.git", from: "13.0.0"),
+		.package(url: "https://github.com/google/promises.git", from: "2.3.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -27,7 +28,9 @@ let package = Package(
             name: "AINetworkCalls",
             dependencies: ["Alamofire",
                            "SwiftyJSON",
-                           .product(name: "ProgressHUD", package: "ProgressHUD"),]),
+                           .product(name: "ProgressHUD", package: "ProgressHUD"),
+						   .product(name: "Promises", package: "promises"),
+						  ]),
         .testTarget(
             name: "AINetworkCallsTests",
             dependencies: ["AINetworkCalls"]),
