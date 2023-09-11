@@ -7,11 +7,9 @@
 //
 
 import UIKit
-import RxSwift
 
 class MasterViewController: UIViewController {
 
-    internal let disposeBag = DisposeBag()
     var isDismissingCallback:(()->Void)?
     
     override func viewDidLoad() {

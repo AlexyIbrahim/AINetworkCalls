@@ -8,9 +8,9 @@
 
 import UIKit
 import AINetworkCalls
-import RxSwift
 import SwiftyJSON
 import Alamofire
+import Promises
 
 
 class ViewController: MasterViewController {
@@ -32,14 +32,6 @@ class ViewController: MasterViewController {
         }) { (json, error) in
             print("get error json: \(String(describing: json))")
         }
-        
-        /* Using RxSwift
-        AINetworkCalls.rxGet(endpoint: .main, function: "get", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (response: GetResponseModel) in
-            print("rxGet json response: \(String(describing: response))")
-        }) { (error) in
-            print("rxGet error: \(String(describing: error))")
-        }.disposed(by: disposeBag)
-        */
     }
     
     public struct PostRequest: Codable {
@@ -77,20 +69,14 @@ class ViewController: MasterViewController {
             print("post error: \(String(describing: json))")
         }
 
-//        let parameters = ["hand": "wave"]
-//        _ = AINetworkCalls.post(endpoint: .main, function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true, successCallback: { (response: JSON) in
-//            print("post json response: \(String(describing: response))")
-//        }) { (json, error) in
-//            print("post error: \(String(describing: json))")
-//        }
-        
-        /* Using RxSwift
-        AINetworkCalls.rxPost(endpoint: .main, function: "post", headers: nil, encoding: .default, parameters: parameters, displayWarnings: true).subscribe(onSuccess: { (response: JSON) in
-            print("rxPost json response: \(String(describing: json))")
-        }) { (error) in
-            print("rxPost error: \(String(describing: error))")
-        }.disposed(by: disposeBag)
-         */
+        /* Using Promises
+		AIContractInterceptor.request(wrapper: wrapper, objectType: JSON.self).then(on: .main) { value in
+			print("post json response: \(String(describing: value))")
+		}.catch(on: .main) { error in
+			print("post error: \(String(describing: error))")
+		}
+		*/
+         
     }
 }
 

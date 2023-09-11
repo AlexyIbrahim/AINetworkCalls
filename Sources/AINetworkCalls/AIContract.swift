@@ -125,9 +125,10 @@ public class AIContractInterceptor {
 		AIContractInterceptor.request(wrapper: wrapper, successCallback: successCallback, errorCallback: errorCallback)
 	}
 	
-	public final class func request<T: Decodable>(contract: AIServiceModule, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> Promise<T> {
-		return Promise { valueCallback, errorCallback in
-			let wrapper = AIServiceWrapper(module: contract)
+	
+	// Promises
+	public final class func request<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, wrapper: AIServiceWrapper, objectType: T.Type) -> Promise<T> {
+		return Promise(on: dispatchQueue ?? .promises, { valueCallback, errorCallback in
 			AIContractInterceptor.request(wrapper: wrapper, successCallback: { fetchResult in
 				valueCallback(fetchResult)
 			}, errorCallback: { fetchResult, error in
@@ -135,11 +136,11 @@ public class AIContractInterceptor {
 					errorCallback(error)
 				}
 			})
-		}
+		})
 	}
 	
-	public final class func request<T: Decodable>(on dispatchQueue: DispatchQueue, contract: AIServiceModule, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> Promise<T> {
-		return Promise(on: dispatchQueue, { valueCallback, errorCallback in
+	public final class func request<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, contract: AIServiceModule, objectType: T.Type) -> Promise<T> {
+		return Promise(on: dispatchQueue ?? .promises, { valueCallback, errorCallback in
 			let wrapper = AIServiceWrapper(module: contract)
 			AIContractInterceptor.request(wrapper: wrapper, successCallback: { fetchResult in
 				valueCallback(fetchResult)

@@ -7,8 +7,8 @@
 
 import Foundation
 
-private extension Encodable {
-    func asDictionary() -> [String: Any] {
+extension Encodable {
+    public func asDictionary() -> [String: Any] {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         guard let data = try? encoder.encode(self),
@@ -17,14 +17,14 @@ private extension Encodable {
         return dictionary
     }
     
-    var dictionary: [String: Any]? {
+    private var dictionary: [String: Any]? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         guard let data = try? encoder.encode(self) else { return nil }
         return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
     }
     
-    func asJsonString() -> String? {
+    private func asJsonString() -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         guard let json = try? encoder.encode(self) else { return nil }
