@@ -54,15 +54,15 @@ extension AIServiceModule {
 		return URL(string: urlString)
 	}
 	
-	public func send<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, objectType: T.Type) -> Promise<T> {
+	public func execute<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, objectType: T.Type) -> Promise<T> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: T.self)
 	}
 	
-	public func send<T: Decodable>(on dispatchQueue: DispatchQueue? = nil) -> Promise<T> {
+	public func execute<T: Decodable>(on dispatchQueue: DispatchQueue? = nil) -> Promise<T> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: T.self)
 	}
 	
-	public func send(on dispatchQueue: DispatchQueue? = nil) -> Promise<JSON> {
+	public func execute(on dispatchQueue: DispatchQueue? = nil) -> Promise<JSON> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: JSON.self)
 	}
 }
