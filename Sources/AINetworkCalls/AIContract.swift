@@ -53,6 +53,18 @@ extension AIServiceModule {
 		guard let urlString = url?.absoluteString.removingPercentEncoding else { return url }
 		return URL(string: urlString)
 	}
+	
+	public func send<T: Decodable>(objectType: T.Type) -> Promise<T> {
+		AIContractInterceptor.request(on: backgroundQueue, contract: self, objectType: T.self)
+	}
+	
+	public func send<T: Decodable>() -> Promise<T> {
+		AIContractInterceptor.request(on: backgroundQueue, contract: self, objectType: T.self)
+	}
+	
+	public func send() -> Promise<JSON> {
+		AIContractInterceptor.request(on: backgroundQueue, contract: self, objectType: JSON.self)
+	}
 }
 
 public class AIServiceWrapper {
@@ -101,6 +113,7 @@ extension AIServiceWrapper {
 public typealias GenericSuccessClosure<T> = (_ fetchResult: T) -> Void
 public typealias GenericErrorClosure = (_ fetchResult:JSON?, _ error:Error?) -> Void
 public typealias VoidClosure = () -> Void
+private let backgroundQueue: DispatchQueue = DispatchQueue.global(qos: .background)
 
 public class AIContractInterceptor {
 	public final class func request<T: Decodable>(wrapper: AIServiceWrapper, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) {
