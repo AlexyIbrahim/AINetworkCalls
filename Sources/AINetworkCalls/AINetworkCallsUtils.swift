@@ -125,6 +125,14 @@ internal class AINetworkCallsUtils: NSObject {
         }
         return truncated + trailing
     }
+	
+	internal final class func formatUrl(url: String) -> String {
+		let pattern = "(?<!http:)//"
+		let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+		let range = NSRange(location: 0, length: url.utf16.count)
+		let modifiedUrl = regex?.stringByReplacingMatches(in: url, options: [], range: range, withTemplate: "/")
+		return modifiedUrl ?? url
+	}
 }
 
 internal extension Dictionary where Key == String, Value == Any {
