@@ -90,9 +90,9 @@ public class AINetworkCalls: NSObject {
     
     
     internal final class func tidyFunction(_ function: String) -> String {
-        var functionStr: String = (function.hasPrefix("/") ? function : "/\(function)")
-        functionStr = function.replacingOccurrences(of: "//", with: "/")
-        return functionStr
+        let functionStr: String = (function.hasPrefix("/") ? function : "/\(function)")
+		let modifiedFunctionStr = AINetworkCallsUtils.formatUrl(url: functionStr)
+        return modifiedFunctionStr
 //        AINetworkCalls.manager.interceptor = RequestInterceptor()
     }
     
@@ -101,9 +101,9 @@ public class AINetworkCalls: NSObject {
     }
     
     internal final class func generatePathFromFunction(endpoint: String, function: String) -> String {
-        var path = endpoint + tidyFunction(function)
-        path = path.replacingOccurrences(of: "//", with: "/")
-        return path
+        let path = endpoint + tidyFunction(function)
+		let modifiedPath = AINetworkCallsUtils.formatUrl(url: path)
+        return modifiedPath
     }
 }
 
