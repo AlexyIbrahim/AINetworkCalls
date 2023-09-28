@@ -191,7 +191,7 @@ extension AINetworkCalls {
                         body = jsonString
                     }
                 }
-                print("------- \(T.self) ------- [Success]")
+                print("------- \(T.self) ------- [Failure]")
                 print("--- Request")
                 print("[\(method)] \(url)")
                 print("--- Headers")
