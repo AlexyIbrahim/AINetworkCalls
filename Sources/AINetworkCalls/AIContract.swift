@@ -28,6 +28,7 @@ public protocol AIServiceModule {
 	var timeout: TimeInterval { get }
 	var handleProgress: Bool? { get }
 	var endpoint: String? { get }
+	var multipartFormData: MultipartFormData? { get }
 }
 
 public extension AIServiceModule {
@@ -38,6 +39,7 @@ public extension AIServiceModule {
 	var headers: HTTPHeaders? { nil }
 	var handleProgress: Bool? { nil }
 	var endpoint: String? { nil }
+	var multipartFormData: MultipartFormData? { nil }
 }
 
 public extension AIServiceModule {
@@ -145,6 +147,8 @@ extension AIServiceWrapper {
 		}
 		return nil
 	}
+	
+	var multipartFormData: MultipartFormData? { serviceContract.multipartFormData }
 }
 
 public typealias GenericSuccessClosure<T> = (_ fetchResult: T) -> Void
@@ -164,6 +168,7 @@ public class AIContractInterceptor {
 									   jsonEncoding: nil,
 									   queryParameters: wrapper.queryParameters,
 									   bodyParameters: wrapper.bodyParameters,
+									   multipartFormData: wrapper.multipartFormData,
 									   displayWarnings: false,
 									   handleProgress: wrapper.handleProgress,
 									   successCallback: successCallback,
@@ -180,6 +185,7 @@ public class AIContractInterceptor {
 												   jsonEncoding: nil,
 												   queryParameters: wrapper.queryParameters,
 												   bodyParameters: wrapper.bodyParameters,
+												   multipartFormData: wrapper.multipartFormData,
 												   displayWarnings: false,
 												   handleProgress: wrapper.handleProgress,
 												   successCallback: successCallback,

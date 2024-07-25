@@ -13,7 +13,7 @@ import UIKit
 // MARK: - Alamofire
 
 public extension AINetworkCalls {
-	final class func request<T: Decodable>(httpMethod: AIHTTPMethod, baseUrl: BaseUrl, endpoint: String, headers: HTTPHeaders?, urlEncoding: URLEncoding? = nil, jsonEncoding: JSONEncoding? = nil, queryParameters: [String: Any]? = nil, bodyParameters: [String: Any]? = nil, displayWarnings: Bool = false, handleProgress: Bool? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
+	final class func request<T: Decodable>(httpMethod: AIHTTPMethod, baseUrl: BaseUrl, endpoint: String, headers: HTTPHeaders?, urlEncoding: URLEncoding? = nil, jsonEncoding: JSONEncoding? = nil, queryParameters: [String: Any]? = nil, bodyParameters: [String: Any]? = nil, multipartFormData: MultipartFormData? = nil, displayWarnings: Bool = false, handleProgress: Bool? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
 		switch httpMethod {
 		case .get:
 			return AINetworkCalls.get(baseUrl: baseUrl, endpoint: endpoint, headers: headers, encoding: urlEncoding, parameters: queryParameters, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
@@ -22,13 +22,14 @@ public extension AINetworkCalls {
 		case .put:
 			return AINetworkCalls.put(baseUrl: baseUrl, endpoint: endpoint, headers: headers, encoding: jsonEncoding, parameters: bodyParameters, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
 		case .multipart:
-			return AINetworkCalls.multipart(baseUrl: baseUrl, endpoint: endpoint, headers: headers, encoding: jsonEncoding, parameters: bodyParameters, displayWarnings: displayWarnings, handleProgress: handleProgress, multipartCallback: { _ in }, progressCallback: { _ in }, successCallback: successCallback, errorCallback: errorCallback)
+			guard let multipartFormData = multipartFormData else { return nil }
+			return AINetworkCalls.multipart(baseUrl: baseUrl, endpoint: endpoint, headers: headers, encoding: jsonEncoding, parameters: bodyParameters, displayWarnings: displayWarnings, handleProgress: handleProgress, multipartFormData: multipartFormData, progressCallback: { _ in }, successCallback: successCallback, errorCallback: errorCallback)
 		default:
 			return nil
 		}
 	}
 	
-	final class func request<T: Decodable>(httpMethod: AIHTTPMethod, fullPath: String, headers: HTTPHeaders?, urlEncoding: URLEncoding? = nil, jsonEncoding: JSONEncoding? = nil, queryParameters: [String: Any]? = nil, bodyParameters: [String: Any]? = nil, displayWarnings: Bool = false, handleProgress: Bool? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
+	final class func request<T: Decodable>(httpMethod: AIHTTPMethod, fullPath: String, headers: HTTPHeaders?, urlEncoding: URLEncoding? = nil, jsonEncoding: JSONEncoding? = nil, queryParameters: [String: Any]? = nil, bodyParameters: [String: Any]? = nil, multipartFormData: MultipartFormData? = nil, displayWarnings: Bool = false, handleProgress: Bool? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> DataRequest? {
 		switch httpMethod {
 		case .get:
 			return AINetworkCalls.get(fullPath: fullPath, headers: headers, encoding: urlEncoding, parameters: queryParameters, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
@@ -37,7 +38,8 @@ public extension AINetworkCalls {
 		case .put:
 			return AINetworkCalls.put(fullPath: fullPath, headers: headers, encoding: jsonEncoding, parameters: bodyParameters, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
 		case .multipart:
-			return AINetworkCalls.multipart(fullPath: fullPath, headers: headers, encoding: jsonEncoding, parameters: bodyParameters, displayWarnings: displayWarnings, handleProgress: handleProgress, multipartCallback: { _ in }, progressCallback: { _ in }, successCallback: successCallback, errorCallback: errorCallback)
+			guard let multipartFormData = multipartFormData else { return nil }
+			return AINetworkCalls.multipart(fullPath: fullPath, headers: headers, encoding: jsonEncoding, parameters: bodyParameters, displayWarnings: displayWarnings, handleProgress: handleProgress, multipartFormData: multipartFormData, progressCallback: { _ in }, successCallback: successCallback, errorCallback: errorCallback)
 		default:
 			return nil
 		}
@@ -131,6 +133,7 @@ public extension AINetworkCalls {
 			
 			AINetworkCalls.handleRequest(AINetworkCallsRequestModel(withPath: fullPath, method: .multipart, headers: headers, body: parameters), handleProgress: handleProgress)
 			
+			
 			let request = manager.upload(multipartFormData: { multiPart in
 				multipartCallback?(multiPart)
 				for parameter in parameters {
@@ -147,6 +150,44 @@ public extension AINetworkCalls {
 					}
 				}
 			}, to: fullPath, method: .post, headers: headers).uploadProgress(queue: .main, closure: { progress in
+				progressCallback?(progress.fractionCompleted)
+			}).responseJSON(completionHandler: { response in
+				AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
+			})
+			return request
+		}
+		return nil
+	}
+	
+	final class func multipart<T: Decodable>(baseUrl: BaseUrl, endpoint: String, headers: HTTPHeaders?, encoding: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, handleProgress: Bool? = nil, multipartFormData: MultipartFormData, progressCallback: ((_ fractionCompleted: Double) -> Void)? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> UploadRequest? {
+		let path = AINetworkCalls.generateFullPath(baseUrl: baseUrl, endpoint: endpoint)
+		
+		return AINetworkCalls.multipart(fullPath: path, headers: headers, encoding: encoding, parameters: params, displayWarnings: displayWarnings, handleProgress: handleProgress, multipartFormData: multipartFormData, progressCallback: progressCallback, successCallback: successCallback, errorCallback: errorCallback)
+	}
+	
+	final class func multipart<T: Decodable>(fullPath: String, headers: HTTPHeaders?, encoding _: JSONEncoding? = nil, parameters params: [String: Any]? = nil, displayWarnings: Bool = false, handleProgress: Bool? = nil, multipartFormData: MultipartFormData, progressCallback: ((_ fractionCompleted: Double) -> Void)? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) -> UploadRequest? {
+		if AINetworkCallsUtils.canProceedWithRequest(displayWarning: displayWarnings) {
+			let headers: HTTPHeaders? = headers
+			
+			let parameters: [String: Any] = params ?? [String: Any]()
+			
+			AINetworkCalls.handleRequest(AINetworkCallsRequestModel(withPath: fullPath, method: .multipart, headers: headers, body: parameters), handleProgress: handleProgress)
+			
+			
+			for parameter in parameters {
+				if parameter.value is UIImage {
+					multipartFormData.append((parameter.value as! UIImage).jpegData(compressionQuality: 0.4)!, withName: parameter.key, fileName: "image.png", mimeType: "image/jpg")
+				} else if parameter.value is [[String: Any]] {
+					let json = JSON(parameter.value)
+					multipartFormData.append(json.rawString()!.data(using: .utf8)!, withName: parameter.key)
+				} else if parameter.value is [String: Any] {
+					let json = JSON(parameter.value)
+					multipartFormData.append(json.rawString()!.data(using: .utf8)!, withName: parameter.key)
+				} else if parameter.value is Data {
+					multipartFormData.append(parameter.value as! Data, withName: parameter.key)
+				}
+			}
+			let request = manager.upload(multipartFormData: multipartFormData, to: fullPath, method: .post, headers: headers).uploadProgress(queue: .main, closure: { progress in
 				progressCallback?(progress.fractionCompleted)
 			}).responseJSON(completionHandler: { response in
 				AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
