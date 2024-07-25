@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  Example
-//
-//  Created by Alexy Ibrahim on 8/23/20.
-//  Copyright © 2020 Alexy Ibrahim. All rights reserved.
-//
-
 import AINetworkCalls
 import Alamofire
 import Promises
