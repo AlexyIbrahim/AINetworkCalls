@@ -27,7 +27,6 @@ public protocol AIServiceModule {
 	var headers: HTTPHeaders? { get }
 	var timeout: TimeInterval { get }
 	var handleProgress: Bool? { get }
-	func url(baseUrl: URL?) -> URL?
 	var endpoint: String? { get }
 }
 
