@@ -43,14 +43,17 @@ public extension AIServiceModule {
 }
 
 public extension AIServiceModule {
+	@discardableResult
 	func execute<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, objectType: T.Type) -> Promise<T> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: T.self)
 	}
 	
+	@discardableResult
 	func execute<T: Decodable>(on dispatchQueue: DispatchQueue? = nil) -> Promise<T> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: T.self)
 	}
 	
+	@discardableResult
 	func execute(on dispatchQueue: DispatchQueue? = nil) -> Promise<JSON> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: JSON.self)
 	}
