@@ -2,6 +2,7 @@
 - hosts: localhost
   vars:
     repo_url: "git@gitlab.com:alexyib/ainetworkcalls.git"
+    remote_branch: "master"
 
   tasks:
     - name: Check the status of the working tree
@@ -86,12 +87,12 @@
         var: tag_exists.stdout
 
     - name: Push the commit to origin-glab
-      shell: git push origin-glab main
+      shell: git push origin-glab {{ remote_branch }}
       when: git_status.stdout != ""
       ignore_errors: yes
 
     - name: Push the commit to origin-gh
-      shell: git push origin-gh main
+      shell: git push origin-gh {{ remote_branch }}
       when: git_status.stdout != ""
       ignore_errors: yes
 
