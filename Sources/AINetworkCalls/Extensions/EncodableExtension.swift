@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  EncodableExtension.swift
+//
 //
 //  Created by Alexy Ibrahim on 9/17/22.
 //
@@ -16,14 +16,14 @@ extension Encodable {
 
         return dictionary
     }
-    
+
     private var dictionary: [String: Any]? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         guard let data = try? encoder.encode(self) else { return nil }
         return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
     }
-    
+
     private func asJsonString() -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys

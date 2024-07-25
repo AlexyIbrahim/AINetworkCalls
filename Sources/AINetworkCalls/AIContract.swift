@@ -1,15 +1,14 @@
 //
-//  File.swift
+//  AIContract.swift
 //
 //
 //  Created by Alexy Ibrahim on 9/18/22.
 //
 
-import Foundation
 import Alamofire
-import SwiftyJSON
+import Foundation
 import Promises
-
+import SwiftyJSON
 
 public typealias Headers = HTTPHeaders
 public typealias Parameters = [String: Any]
@@ -20,17 +19,16 @@ public enum Module: String {
 	case production
 }
 
-
-
 public protocol AIServiceModule {
 	var method: AIHTTPMethod { get }
 	var bodyParameters: Parameters? { get }
 	var queryParameters: Parameters? { get }
-	var aiEndPoint: AIEndPoint { get }
+	var aiUrl: AIUrl { get }
 	var headers: HTTPHeaders? { get }
 	var timeout: TimeInterval { get }
 	var handleProgress: Bool? { get }
 	func url(baseUrl: URL?) -> URL?
+	var endpoint: String? { get }
 }
 
 public extension AIServiceModule {
@@ -40,36 +38,31 @@ public extension AIServiceModule {
 	var queryParameters: Parameters? { nil }
 	var headers: HTTPHeaders? { nil }
 	var handleProgress: Bool? { nil }
+	var endpoint: String? { nil }
 }
 
-extension AIServiceModule {
-	
-	public func url(baseUrl: URL?) -> URL? {
-		
-		var url = baseUrl
-		
-		url?.appendPathComponent("/\(aiEndPoint.function)")
-		
-		guard let urlString = url?.absoluteString.removingPercentEncoding else { return url }
-		return URL(string: urlString)
-	}
-	
-	public func execute<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, objectType: T.Type) -> Promise<T> {
+public extension AIServiceModule {
+	func execute<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, objectType: T.Type) -> Promise<T> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: T.self)
 	}
 	
-	public func execute<T: Decodable>(on dispatchQueue: DispatchQueue? = nil) -> Promise<T> {
+	func execute<T: Decodable>(on dispatchQueue: DispatchQueue? = nil) -> Promise<T> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: T.self)
 	}
 	
-	public func execute(on dispatchQueue: DispatchQueue? = nil) -> Promise<JSON> {
+	func execute(on dispatchQueue: DispatchQueue? = nil) -> Promise<JSON> {
 		AIContractInterceptor.request(on: dispatchQueue ?? backgroundQueue, contract: self, objectType: JSON.self)
 	}
 }
 
 public class AIServiceWrapper {
+	enum AIServiceWrapperError: Error {
+		case invalidBaseUrl
+		case invalidFullUrl
+	}
 	
-	private (set) var serviceContract: AIServiceModule
+	
+	private(set) var serviceContract: AIServiceModule
 	
 	public init(module: AIServiceModule) {
 		serviceContract = module
@@ -77,7 +70,6 @@ public class AIServiceWrapper {
 }
 
 extension AIServiceWrapper {
-	
 	var defaultParameters: Parameters? { return nil }
 	
 	var queryParameters: Parameters? { serviceContract.queryParameters }
@@ -86,21 +78,67 @@ extension AIServiceWrapper {
 	
 	var method: AIHTTPMethod { serviceContract.method }
 	
-	var url: URL? { serviceContract.url(baseUrl: serviceContract.url(baseUrl: .init(string: serviceContract.aiEndPoint.endpoint.rawValue))) }
-	
 	var timeout: TimeInterval { serviceContract.timeout }
 	
 	var headers: HTTPHeaders? { serviceContract.headers }
 	
-	var aiEndPoint: AIEndPoint { serviceContract.aiEndPoint }
+	var aiUrl: AIUrl { serviceContract.aiUrl }
 	
 	var handleProgress: Bool? { serviceContract.handleProgress }
+	
+	var endpoint: String? {
+		if self.aiUrl.endpointExists, let endpoint = self.aiUrl.endpoint {
+			return endpoint
+		} else if let endpoint = serviceContract.endpoint {
+			return endpoint
+		}
+		return nil
+	}
+	
+	var baseUrl: BaseUrl? { serviceContract.aiUrl.baseUrl }
+	
+	var fullUrl: URL {
+		var finalUrl: URL
+		
+		do {
+			finalUrl = try constructFullUrl()
+		} catch {
+			fatalError("Error constructing URL: \(error)")
+		}
+		
+		return finalUrl
+	}
+	
+	private func constructFullUrl() throws -> URL {
+		if self.aiUrl.isFullURL {
+			guard let url = URL(string: self.aiUrl.fullURL) else {
+				throw AIServiceWrapperError.invalidFullUrl
+			}
+			return url
+		} else {
+			if let baseUrlString = self.aiUrl.baseUrl?.rawValue, var baseUrl = URL(string: baseUrlString) {
+				if let endpoint = self.endpoint {
+					baseUrl.appendPathComponent("/\(endpoint)")
+					guard let urlString = baseUrl.absoluteString.removingPercentEncoding, let url = URL(string: urlString) else {
+						return baseUrl // Should never reach here due to preceding checks
+					}
+					return url
+				} else {
+					return baseUrl
+				}
+			} else {
+				throw AIServiceWrapperError.invalidBaseUrl
+			}
+		}
+	}
+	
 	
 	public var jsonString: String? {
 		guard let params = bodyParameters else { return nil }
 		if #available(iOS 13.0, *) {
 			if method != .get,
-			   let data = try? JSONSerialization.data(withJSONObject: params, options: [.withoutEscapingSlashes, .sortedKeys]) {
+			   let data = try? JSONSerialization.data(withJSONObject: params, options: [.withoutEscapingSlashes, .sortedKeys])
+			{
 				return String(data: data, encoding: .utf8)
 			}
 		} else {
@@ -111,26 +149,52 @@ extension AIServiceWrapper {
 }
 
 public typealias GenericSuccessClosure<T> = (_ fetchResult: T) -> Void
-public typealias GenericErrorClosure = (_ fetchResult:JSON?, _ error:Error?) -> Void
+public typealias GenericErrorClosure = (_ fetchResult: JSON?, _ error: Error?) -> Void
 public typealias VoidClosure = () -> Void
-private let backgroundQueue: DispatchQueue = DispatchQueue.global(qos: .background)
+private let backgroundQueue: DispatchQueue = .global(qos: .background)
 
 public class AIContractInterceptor {
 	public final class func request<T: Decodable>(wrapper: AIServiceWrapper, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) {
 		AINetworkCalls.manager.sessionConfiguration.timeoutIntervalForRequest = wrapper.timeout
 		
-		_ = AINetworkCalls.request(httpMethod: wrapper.method,
-								   endpoint: wrapper.aiEndPoint.endpoint,
-								   function: wrapper.aiEndPoint.function,
-								   headers: wrapper.headers,
-								   urlEncoding: nil,
-								   jsonEncoding: nil,
-								   queryParameters: wrapper.queryParameters,
-								   bodyParameters: wrapper.bodyParameters,
-								   displayWarnings: false,
-								   handleProgress: wrapper.handleProgress,
-								   successCallback: successCallback,
-								   errorCallback: errorCallback)
+		if wrapper.aiUrl.isFullURL {
+			_ = AINetworkCalls.request(httpMethod: wrapper.method,
+									   fullPath: wrapper.fullUrl.absoluteString,
+									   headers: wrapper.headers,
+									   urlEncoding: nil,
+									   jsonEncoding: nil,
+									   queryParameters: wrapper.queryParameters,
+									   bodyParameters: wrapper.bodyParameters,
+									   displayWarnings: false,
+									   handleProgress: wrapper.handleProgress,
+									   successCallback: successCallback,
+									   errorCallback: errorCallback)
+		} else {
+			if wrapper.aiUrl.baseUrlExists {
+				if let baseUrl = wrapper.baseUrl {
+					if let endpoint = wrapper.endpoint {
+						_ = AINetworkCalls.request(httpMethod: wrapper.method,
+												   baseUrl: baseUrl,
+												   endpoint: endpoint,
+												   headers: wrapper.headers,
+												   urlEncoding: nil,
+												   jsonEncoding: nil,
+												   queryParameters: wrapper.queryParameters,
+												   bodyParameters: wrapper.bodyParameters,
+												   displayWarnings: false,
+												   handleProgress: wrapper.handleProgress,
+												   successCallback: successCallback,
+												   errorCallback: errorCallback)
+					} else {
+						errorCallback?(nil, AIServiceWrapper.AIServiceWrapperError.invalidBaseUrl)
+					}
+				} else {
+					errorCallback?(nil, AIServiceWrapper.AIServiceWrapperError.invalidBaseUrl)
+				}
+			} else {
+				errorCallback?(nil, AIServiceWrapper.AIServiceWrapperError.invalidBaseUrl)
+			}
+		}
 	}
 	
 	public final class func request<T: Decodable>(contract: AIServiceModule, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) {
@@ -138,30 +202,29 @@ public class AIContractInterceptor {
 		AIContractInterceptor.request(wrapper: wrapper, successCallback: successCallback, errorCallback: errorCallback)
 	}
 	
-	
 	// Promises
-	public final class func request<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, wrapper: AIServiceWrapper, objectType: T.Type) -> Promise<T> {
-		return Promise(on: dispatchQueue ?? .promises, { valueCallback, errorCallback in
+	public final class func request<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, wrapper: AIServiceWrapper, objectType _: T.Type) -> Promise<T> {
+		return Promise(on: dispatchQueue ?? .promises) { valueCallback, errorCallback in
 			AIContractInterceptor.request(wrapper: wrapper, successCallback: { fetchResult in
 				valueCallback(fetchResult)
-			}, errorCallback: { fetchResult, error in
+			}, errorCallback: { _, error in
 				if let error = error {
 					errorCallback(error)
 				}
 			})
-		})
+		}
 	}
 	
-	public final class func request<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, contract: AIServiceModule, objectType: T.Type) -> Promise<T> {
-		return Promise(on: dispatchQueue ?? .promises, { valueCallback, errorCallback in
+	public final class func request<T: Decodable>(on dispatchQueue: DispatchQueue? = nil, contract: AIServiceModule, objectType _: T.Type) -> Promise<T> {
+		return Promise(on: dispatchQueue ?? .promises) { valueCallback, errorCallback in
 			let wrapper = AIServiceWrapper(module: contract)
 			AIContractInterceptor.request(wrapper: wrapper, successCallback: { fetchResult in
 				valueCallback(fetchResult)
-			}, errorCallback: { fetchResult, error in
+			}, errorCallback: { _, error in
 				if let error = error {
 					errorCallback(error)
 				}
 			})
-		})
+		}
 	}
 }

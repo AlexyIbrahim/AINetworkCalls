@@ -1,5 +1,5 @@
-import XCTest
 @testable import AINetworkCalls
+import XCTest
 
 final class AINetworkCallsTests: XCTestCase {
     func testExample() {

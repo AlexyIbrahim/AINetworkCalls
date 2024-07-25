@@ -1,0 +1,138 @@
+---
+- hosts: localhost
+  vars:
+    repo_url: "git@gitlab.com:alexyib/ainetworkcalls.git"
+
+  tasks:
+    - name: Check the status of the working tree
+      shell: git status --porcelain
+      register: git_status
+
+    - name: Stop playbook if there are no changes to commit
+      meta: end_play
+      when: git_status.stdout == ""
+
+    - name: Check if bump2version is installed
+      command: pip3 show bump2version
+      register: bump2version_installed
+      ignore_errors: yes
+
+    - name: Install bump2version
+      command: pip3 install bump2version
+      when: bump2version_installed.rc != 0
+
+    - name: Check if git-changelog is installed
+      command: git-changelog --version
+      register: changelog_installed
+      ignore_errors: yes
+
+    - name: Install git-changelog
+      npm:
+        name: git-changelog
+        global: yes
+      when: changelog_installed.rc != 0
+
+    - name: Ensure .bumpversion.cfg is added to git
+      command: git add .bumpversion.cfg
+      register: add_bumpversion_cfg
+      ignore_errors: yes
+
+    - name: Commit .bumpversion.cfg if not already committed
+      shell: >
+        if git diff --name-only --cached | grep .bumpversion.cfg; then
+          git commit -m "Add .bumpversion.cfg";
+        fi
+      when: add_bumpversion_cfg is changed
+      ignore_errors: yes
+
+    - name: Increment the patch version
+      command: bump2version --allow-dirty --list patch # allow uncommitted changes
+      register: bump2version_output
+
+    - name: Extract the new version
+      set_fact:
+        version: "{{ bump2version_output.stdout_lines | select('match', '^new_version=.*') | map('replace', 'new_version=', '') | first }}"
+
+    - name: Log version
+      debug:
+        var: version
+
+    - name: Generate changelog
+      shell: git-changelog -n {{ version }} -f changelog.md --repo_url {{ repo_url }}
+      register: changelog_output
+      ignore_errors: yes
+
+    - name: Stage the changelog
+      shell: git add changelog.md
+      when: changelog_output.rc == 0
+
+    - name: Stage all changes, including untracked files
+      shell: git add -A
+
+    - name: Commit all changes if any
+      shell: git commit -m "Bump version to {{ version }} and update changelog"
+      when: git_status.stdout != ""
+      ignore_errors: yes
+
+    - name: Tag the commit with the new version
+      shell: git tag -a "{{ version }}" -m "Version {{ version }}"
+
+    - name: Check if tag already exists
+      shell: git tag -l "{{ version }}"
+      register: tag_exists
+
+    - name : Check if tag already exists
+      debug:
+        var: tag_exists.stdout
+
+    - name: Push the commit to origin-glab
+      shell: git push origin-glab main
+      when: git_status.stdout != ""
+      ignore_errors: yes
+
+    - name: Push the commit to origin-gh
+      shell: git push origin-gh main
+      when: git_status.stdout != ""
+      ignore_errors: yes
+
+    - name: Push the tag to origin-glab
+      shell: git push origin-glab "{{ version }}"
+      ignore_errors: yes
+
+    - name: Push the tag to origin-gh
+      shell: git push origin-gh "{{ version }}"
+      ignore_errors: yes
+
+    - name: Check if glab is installed
+      command: glab --version
+      register: glab_installed
+      ignore_errors: yes
+
+    - name: Display warning if glab is not installed
+      debug:
+        msg: "Warning: glab is not installed. Skipping GitLab release creation."
+      when: glab_installed.rc != 0
+
+    - name: Create a release on GitLab
+      shell: glab release create {{ version }} -n "Release {{ version }}" -F changelog.md
+      when: glab_installed.rc == 0 and changelog_output.rc == 0
+      ignore_errors: yes
+
+    - name: Check if gh is installed
+      command: gh --version
+      register: gh_installed
+      ignore_errors: yes
+
+    - name: Display warning if gh is not installed
+      debug:
+        msg: "Warning: gh is not installed. Skipping GitHub release creation."
+      when: gh_installed.rc != 0
+
+    - name: Ensure tag is available on GitHub
+      shell: git ls-remote --tags origin-gh | grep "refs/tags/{{ version }}"
+      register: tag_on_github
+
+    - name: Create a release on GitHub
+      shell: gh release create "{{ version }}" --title "Release {{ version }}" --generate-notes # -F changelog.md
+      when: gh_installed.rc == 0 and changelog_output.rc == 0 and tag_on_github.rc == 0
+      ignore_errors: yes
