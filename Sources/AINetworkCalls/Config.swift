@@ -11,7 +11,7 @@ public struct AIHTTPMethod: RawRepresentable, Equatable, Hashable {
 	/// `CONNECT` method.
 	//    public static let connect = AIHTTPMethod(rawValue: "CONNECT")
 	/// `DELETE` method.
-	//    public static let delete = AIHTTPMethod(rawValue: "DELETE")
+	public static let delete = AIHTTPMethod(rawValue: "DELETE")
 	/// `GET` method.
 	public static let get = AIHTTPMethod(rawValue: "GET")
 	/// `HEAD` method.
