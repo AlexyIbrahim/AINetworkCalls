@@ -9,11 +9,6 @@
 import AINetworkCalls
 import UIKit
 
-public extension Endpoint {
-    static let main = Endpoint(rawValue: "https://postman-echo.com/")
-    static let sandbox = Endpoint(rawValue: "https://dev.shelvz.com/MerchandiserServer/mvc")
-}
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

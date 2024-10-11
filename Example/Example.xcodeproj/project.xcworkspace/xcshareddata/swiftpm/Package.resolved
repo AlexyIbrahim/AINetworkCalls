@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
         "state": {
           "branch": null,
-          "revision": "354dda32d89fc8cd4f5c46487f64957d355f53d8",
-          "version": "5.6.1"
+          "revision": "f455c2975872ccd2d9c81594c658af65716e9b9a",
+          "version": "5.9.1"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/relatedcode/ProgressHUD.git",
         "state": {
           "branch": null,
-          "revision": "01b56b31d61512d900b58cb7ac1479509bd7170f",
-          "version": "13.7.2"
+          "revision": "46792db49f80454879a939f9b2be31bb61c37b0c",
+          "version": "13.8.6"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/google/promises.git",
         "state": {
           "branch": null,
-          "revision": "e70e889c0196c76d22759eb50d6a0270ca9f1d9e",
-          "version": "2.3.1"
+          "revision": "540318ecedd63d883069ae7f1ed811a2df00b6ac",
+          "version": "2.4.0"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON.git",
         "state": {
           "branch": null,
-          "revision": "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
-          "version": "5.0.1"
+          "revision": "af76cf3ef710b6ca5f8c05f3a31307d44a3c5828",
+          "version": "5.0.2"
         }
       }
     ]

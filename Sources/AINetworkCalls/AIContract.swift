@@ -218,6 +218,8 @@ public class AIContractInterceptor {
 			}, errorCallback: { _, error in
 				if let error = error {
 					errorCallback(error)
+				} else {
+					errorCallback(AIServiceWrapper.AIServiceWrapperError.invalidBaseUrl)
 				}
 			})
 		}
@@ -231,6 +233,8 @@ public class AIContractInterceptor {
 			}, errorCallback: { _, error in
 				if let error = error {
 					errorCallback(error)
+				} else {
+					errorCallback(AIServiceWrapper.AIServiceWrapperError.invalidBaseUrl)
 				}
 			})
 		}

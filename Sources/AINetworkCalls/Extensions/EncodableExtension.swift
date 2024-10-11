@@ -17,14 +17,14 @@ extension Encodable {
         return dictionary
     }
 
-    private var dictionary: [String: Any]? {
+	public var dictionary: [String: Any]? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         guard let data = try? encoder.encode(self) else { return nil }
         return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
     }
 
-    private func asJsonString() -> String? {
+	public func asJsonString() -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         guard let json = try? encoder.encode(self) else { return nil }
