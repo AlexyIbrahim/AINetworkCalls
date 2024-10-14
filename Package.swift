@@ -1,7 +1,7 @@
 // swift-tools-version:5.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
-// Package version: 1.5.17
+// Package version: 1.5.18
 
 import PackageDescription
 
@@ -19,9 +19,9 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
-        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.0"),
-        .package(url: "https://github.com/relatedcode/ProgressHUD.git", from: "13.0.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.0"),
+        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.2"),
+        .package(url: "https://github.com/relatedcode/ProgressHUD.git", from: "14.1.3"),
         .package(url: "https://github.com/google/promises.git", from: "2.3.1"),
     ],
     targets: [
