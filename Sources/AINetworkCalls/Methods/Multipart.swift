@@ -38,7 +38,7 @@ public extension AINetworkCalls {
 				}
 			}, to: fullPath, method: .post, headers: headers).uploadProgress(queue: .main, closure: { progress in
 				progressCallback?(progress.fractionCompleted)
-			}).responseJSON(completionHandler: { response in
+			}).responseDecodable(of: T.self, completionHandler: { response in
 				AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
 			})
 			return request
@@ -76,7 +76,7 @@ public extension AINetworkCalls {
 			}
 			let request = manager.upload(multipartFormData: multipartFormData, to: fullPath, method: .post, headers: headers).uploadProgress(queue: .main, closure: { progress in
 				progressCallback?(progress.fractionCompleted)
-			}).responseJSON(completionHandler: { response in
+			}).responseDecodable(of: T.self, completionHandler: { response in
 				AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
 			})
 			return request

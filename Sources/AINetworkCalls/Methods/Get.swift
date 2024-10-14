@@ -20,7 +20,7 @@ public extension AINetworkCalls {
 			AINetworkCalls.handleRequest(AINetworkCallsRequestModel(withPath: fullPath, method: .get, headers: headers, parameters: parameters), handleProgress: handleProgress)
 			
 			let request = manager.request(fullPath, method: HTTPMethod.get, parameters: parameters, encoding: encoding ?? .queryString, headers: headers).validate(statusCode: 200 ..< 300)
-				.responseJSON { response in
+				.responseDecodable(of: T.self) { response in
 					AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
 				}
 			return request

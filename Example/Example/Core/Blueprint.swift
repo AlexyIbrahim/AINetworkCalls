@@ -58,7 +58,7 @@ enum APIBlueprints {
 			case .postMethod:
 				return "post"
 			case .error:
-				return "status/404"
+				return "status/401"
 			}
 		}
 		

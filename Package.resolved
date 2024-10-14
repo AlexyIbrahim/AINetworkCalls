@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
         "state": {
           "branch": null,
-          "revision": "78424be314842833c04bc3bef5b72e85fff99204",
-          "version": "5.6.4"
+          "revision": "ea6a94b7dddffd0ca4d0f29252d95310b84dec84",
+          "version": "5.10.0"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/relatedcode/ProgressHUD.git",
         "state": {
           "branch": null,
-          "revision": "2b80c6f5a091c76a01f080545723f9b0bcf928cd",
-          "version": "13.6.2"
+          "revision": "9364904a42cb25f58d026451140c4080a868e72e",
+          "version": "14.1.3"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON.git",
         "state": {
           "branch": null,
-          "revision": "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
-          "version": "5.0.1"
+          "revision": "af76cf3ef710b6ca5f8c05f3a31307d44a3c5828",
+          "version": "5.0.2"
         }
       }
     ]

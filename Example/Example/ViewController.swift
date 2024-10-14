@@ -10,8 +10,8 @@ class ViewController: MasterViewController {
 		// Do any additional setup after loading the view.
 		
 		//		getAPITest()
-//		postAPITest()
-		errorTest()
+		postAPITest()
+//		errorTest()
 	}
 	
 	//	func getAPITest() {

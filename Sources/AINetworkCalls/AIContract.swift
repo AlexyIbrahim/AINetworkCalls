@@ -11,7 +11,7 @@ import Promises
 import SwiftyJSON
 
 public typealias Headers = HTTPHeaders
-public typealias Parameters = [String: Any]
+public typealias ParametersType = [String: Any]
 
 public enum Module: String {
 	case sandbox
@@ -21,8 +21,8 @@ public enum Module: String {
 
 public protocol AIServiceModule {
 	var method: AIHTTPMethod { get }
-	var bodyParameters: Parameters? { get }
-	var queryParameters: Parameters? { get }
+	var bodyParameters: ParametersType? { get }
+	var queryParameters: ParametersType? { get }
 	var aiUrl: AIUrl { get }
 	var headers: HTTPHeaders? { get }
 	var timeout: TimeInterval { get }
@@ -33,9 +33,9 @@ public protocol AIServiceModule {
 
 public extension AIServiceModule {
 	var method: AIHTTPMethod { .get }
-	var bodyParameters: Parameters? { nil }
+	var bodyParameters: ParametersType? { nil }
 	var timeout: TimeInterval { 60 }
-	var queryParameters: Parameters? { nil }
+	var queryParameters: ParametersType? { nil }
 	var headers: HTTPHeaders? { nil }
 	var handleProgress: Bool? { nil }
 	var endpoint: String? { nil }
@@ -74,11 +74,11 @@ public class AIServiceWrapper {
 }
 
 extension AIServiceWrapper {
-	var defaultParameters: Parameters? { return nil }
+	var defaultParameters: ParametersType? { return nil }
 	
-	var queryParameters: Parameters? { serviceContract.queryParameters }
+	var queryParameters: ParametersType? { serviceContract.queryParameters }
 	
-	var bodyParameters: Parameters? { serviceContract.bodyParameters }
+	var bodyParameters: ParametersType? { serviceContract.bodyParameters }
 	
 	var method: AIHTTPMethod { serviceContract.method }
 	
