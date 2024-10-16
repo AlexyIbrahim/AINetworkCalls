@@ -160,9 +160,17 @@ extension AINetworkCalls {
 			if T.self == JSON.self {
 				successCallback?(json as! T)
 			} else if T.self == [String: Any].self {
-				successCallback?(json.dictionaryObject as! T)
+				if let dictionary = json.dictionaryObject as? T {
+					successCallback?(dictionary)
+				} else {
+					errorCallback?(json, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to convert JSON to Dictionary"]))
+				}
 			} else {
-				successCallback?(AINetworkCallsUtils.decode(model: T.self, from: json))
+				if let decodedObject = AINetworkCallsUtils.decode(model: T.self, from: json) {
+					successCallback?(decodedObject)
+				} else {
+					errorCallback?(json, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to decode JSON"]))
+				}
 			}
 			
 			// 🌿 global callback

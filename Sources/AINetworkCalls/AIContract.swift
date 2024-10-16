@@ -32,9 +32,9 @@ public protocol AIServiceModule {
 }
 
 public extension AIServiceModule {
+	var timeout: TimeInterval { 60 }
 	var method: AIHTTPMethod { .get }
 	var bodyParameters: ParametersType? { nil }
-	var timeout: TimeInterval { 60 }
 	var queryParameters: ParametersType? { nil }
 	var headers: HTTPHeaders? { nil }
 	var handleProgress: Bool? { nil }

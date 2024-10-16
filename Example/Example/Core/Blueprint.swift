@@ -38,14 +38,15 @@ enum APIBlueprints {
 			}
 		}
 		
-		var bodyParameters: Parameters? {
+		var bodyParameters: ParametersType? {
 			switch self {
-			case let .postMethod(parameters): return parameters.dictionary!
+			case let .postMethod(parameters):
+				return parameters.dictionary!
 			default: return nil
 			}
 		}
 		
-		var queryParameters: Parameters? {
+		var queryParameters: ParametersType? {
 			return nil
 		}
 		

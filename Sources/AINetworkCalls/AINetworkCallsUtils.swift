@@ -78,21 +78,33 @@ class AINetworkCallsUtils: NSObject {
         viewController?.present(alertViewController, animated: true, completion: nil)
     }
 
-    final class func decode<T>(model: T.Type, from json: JSON) -> T where T: Decodable {
-//        print("json.stringValue: \(json.diction)")
-        let jsonData = try? JSONSerialization.data(withJSONObject: json.dictionaryObject as Any, options: [])
-        let jsonString = String(data: jsonData!, encoding: .utf8)!
-//        print("json string: \(jsonString)")
+	final class func decode<T>(model: T.Type, from json: JSON) -> T? where T: Decodable {
+		do {
+			let data: Data
+			if json.type == .dictionary || json.type == .array {
+				// For dictionary or array types, use rawData()
+				data = try json.rawData()
+			} else if json.type == .string {
+				// For string types, encode the string to data
+				if let string = json.string, let stringData = string.data(using: .utf8) {
+					data = stringData
+				} else {
+					print("Failed to encode string to data")
+					return nil
+				}
+			} else {
+				print("Unsupported JSON type: \(json.type)")
+				return nil
+			}
+			
+			let decoder = JSONDecoder()
+			return try decoder.decode(T.self, from: data)
+		} catch {
+			print("Error decoding JSON: \(error)")
+			return nil
+		}
+	}
 
-//        let encoder = JSONEncoder()
-//        if let jsonData = try! encoder.encode(json.dictionaryObject) {
-//            if let jsonString = String(data: jsonData, encoding: .utf8) {
-//                print(jsonString)
-//            }
-//        }
-
-        return AINetworkCallsUtils.decode(model: model, from: jsonString)
-    }
 
     final class func decode<T>(model: T.Type, from dictionary: [String: String]) -> T where T: Decodable {
         let encoder = JSONEncoder()
