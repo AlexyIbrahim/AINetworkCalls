@@ -19,7 +19,8 @@ public extension AINetworkCalls {
 			
 			AINetworkCalls.handleRequest(AINetworkCallsRequestModel(withPath: fullPath, method: .post, headers: headers, body: parameters), handleProgress: handleProgress)
 			
-			let request = manager.request(fullPath, method: HTTPMethod.post, parameters: parameters, encoding: encoding ?? .default, headers: headers).validate(statusCode: 200 ..< 300)
+			let request = manager.request(fullPath, method: HTTPMethod.post, parameters: parameters, encoding: encoding ?? .default, headers: headers)
+				.validate(statusCode: 200..<300)
 				.responseDecodable(of: T.self) { response in
 					AINetworkCalls.handleResponse(response: response, displayWarnings: displayWarnings, handleProgress: handleProgress, successCallback: successCallback, errorCallback: errorCallback)
 				}

@@ -105,7 +105,6 @@ class AINetworkCallsUtils: NSObject {
 		}
 	}
 
-
     final class func decode<T>(model: T.Type, from dictionary: [String: String]) -> T where T: Decodable {
         let encoder = JSONEncoder()
         let jsonData = try! encoder.encode(dictionary)

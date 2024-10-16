@@ -123,14 +123,33 @@ extension AINetworkCalls {
 	 - Author:
 	 Alexy
 	 */
-	final class func handleResponse<T>(response: AFDataResponse<some Sendable>, displayWarnings _: Bool, handleProgress: Bool? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) where T: Decodable {
+	final class func handleResponse<T>(response: AFDataResponse<T>, displayWarnings _: Bool, handleProgress: Bool? = nil, successCallback: GenericSuccessClosure<T>? = nil, errorCallback: GenericErrorClosure? = nil) where T: Decodable {
 		switch response.result {
-		case .success:
+		case .success(let value):
 			if handleProgress ?? Config.shared.handleProgress {
 				ProgressHUD.dismiss()
 			}
 			
-			let json = JSON(response.value!)
+			var json: JSON?
+			if T.self == JSON.self {
+				json = value as? JSON
+			} else if T.self == [String: Any].self {
+				if let dict = value as? [String: Any] {
+					json = JSON(dict)
+				}
+			} else {
+				// T is a custom Decodable model
+				if let data = response.data {
+					do {
+						json = try JSON(data: data)
+					} catch {
+						print("Error parsing data to JSON: \(error)")
+					}
+				} else {
+					print("No response data available to create JSON")
+				}
+			}
+			
 			if Config.shared.isDebug {
 				let url = response.request?.url?.absoluteString ?? "n/a"
 				let method = response.request?.method?.rawValue ?? "n/a"
@@ -138,57 +157,72 @@ extension AINetworkCalls {
 				let statusCode = response.response?.statusCode ?? 0
 				var body: String? = nil
 				if let jsonData = response.request?.httpBody {
-					if let jsonString = String(data: jsonData, encoding: .utf8) {
-						body = jsonString
-					}
+					body = String(data: jsonData, encoding: .utf8)
 				}
 				print("------- \(T.self) ------- [Success]")
 				print("--- Request")
 				print("[\(method)] \(url)")
 				print("--- Headers")
-				print("\(headers.isEmpty ? "n/a" : headers.description)")
+				print(headers.isEmpty ? "n/a" : "\(headers)")
 				print("--- Body")
-				print("\(body ?? "n/a")")
+				print(body ?? "n/a")
 				print("--- Response [\(statusCode)]")
-				var response = "\(json)"
+				var responseString = json != nil ? "\(json!)" : "\(value)"
 				if Config.shared.trimLongResponse {
-					response = AINetworkCallsUtils.truncate(str: response, length: Config.shared.longResponseCharLimit)
+					responseString = AINetworkCallsUtils.truncate(str: responseString, length: Config.shared.longResponseCharLimit)
 				}
-				print("\(response)")
+				print(responseString)
 			}
+			
 			// 🌿 success callback
 			if T.self == JSON.self {
+				// Convert Any to SwiftyJSON.JSON
 				successCallback?(json as! T)
 			} else if T.self == [String: Any].self {
-				if let dictionary = json.dictionaryObject as? T {
-					successCallback?(dictionary)
+				if let dictionary = value as? [String: Any] {
+					successCallback?(dictionary as! T)
 				} else {
-					errorCallback?(json, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to convert JSON to Dictionary"]))
+					errorCallback?(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to convert response to [String: Any]"]))
 				}
 			} else {
-				if let decodedObject = AINetworkCallsUtils.decode(model: T.self, from: json) {
-					successCallback?(decodedObject)
-				} else {
-					errorCallback?(json, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to decode JSON"]))
-				}
+				// Assume T is Decodable
+				successCallback?(value)
+				//				do {
+				//					let data = try JSONSerialization.data(withJSONObject: value, options: [])
+				//					let decodedObject = try JSONDecoder().decode(T.self, from: data)
+				//					successCallback?(decodedObject)
+				//				} catch {
+				//					errorCallback?(nil, error)
+				//				}
 			}
 			
 			// 🌿 global callback
-			if let castedResponse = response as? AFDataResponse<Any> {
-				AINetworkCalls.globalSuccessCallback?(castedResponse, json)
+			if let json = json {
+				let anyResponse = AFDataResponse<Any>(
+					request: response.request,
+					response: response.response,
+					data: response.data,
+					metrics: response.metrics,
+					serializationDuration: response.serializationDuration,
+					result: response.result.map { $0 as Any }
+				)
+				AINetworkCalls.globalSuccessCallback?(anyResponse, json)
 			}
-		case .failure:
+		case .failure(let error):
 			if handleProgress ?? Config.shared.handleProgress {
 				AINetworkCalls.handleError(response.error, errorCode: response.response?.statusCode ?? 0)
 			}
 			
-			// 🌿 json parsing
-			var json: JSON? = nil
-			do {
-				if let data = response.data {
+			var json: JSON?
+			if let data = response.data {
+				do {
 					json = try JSON(data: data)
+				} catch {
+					print("Error parsing error data to JSON: \(error)")
 				}
-			} catch {}
+			} else {
+				print("No response data available to create JSON")
+			}
 			
 			if Config.shared.isDebug {
 				let url = response.request?.url?.absoluteString ?? "n/a"
@@ -196,33 +230,50 @@ extension AINetworkCalls {
 				let headers = response.request?.headers.dictionary ?? [:]
 				var body: String? = nil
 				if let jsonData = response.request?.httpBody {
-					if let jsonString = String(data: jsonData, encoding: .utf8) {
-						body = jsonString
-					}
+					body = String(data: jsonData, encoding: .utf8)
 				}
 				print("------- \(T.self) ------- [Failure]")
 				print("--- Request")
 				print("[\(method)] \(url)")
 				print("--- Headers")
-				print("\(headers.isEmpty ? "n/a" : headers.description)")
+				print(headers.isEmpty ? "n/a" : "\(headers)")
 				print("--- Body")
-				print("\(body ?? "n/a")")
+				print(body ?? "n/a")
 				if let json = json {
 					let statusCode = response.response?.statusCode ?? 0
 					print("--- Response [\(statusCode)]")
-					var response = "\(json)"
+					var responseString = "\(json)"
 					if Config.shared.trimLongResponse {
-						response = AINetworkCallsUtils.truncate(str: response, length: Config.shared.longResponseCharLimit)
+						responseString = AINetworkCallsUtils.truncate(str: responseString, length: Config.shared.longResponseCharLimit)
 					}
-					print("\(response)")
+					print(responseString)
 				}
 			}
 			
 			// 🌿 callback
-			errorCallback?(json ?? nil, response.error)
-			if let castedResponse = response as? AFDataResponse<Any> {
-				AINetworkCalls.glocalErrorCallBack?(castedResponse, json ?? nil, response.error, response.response?.statusCode ?? 0)
+			if T.self == JSON.self {
+				errorCallback?(json, error)
+			} else if T.self == [String: Any].self {
+				if let dictionary = json?.dictionaryObject as? T {
+					errorCallback?(dictionary as? JSON, error)
+				} else {
+					errorCallback?(json, error)
+				}
+			} else {
+				// Assume T is Decodable
+				errorCallback?(json, error)
 			}
+			
+			// 🌿 global error callback
+			let anyResponse = AFDataResponse<Any>(
+				request: response.request,
+				response: response.response,
+				data: response.data,
+				metrics: response.metrics,
+				serializationDuration: response.serializationDuration,
+				result: .failure(error)
+			)
+			AINetworkCalls.glocalErrorCallBack?(anyResponse, json, error, response.response?.statusCode ?? 0)
 		}
 	}
 	

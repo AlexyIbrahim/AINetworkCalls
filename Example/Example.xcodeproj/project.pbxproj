@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B74C2A22CC015D600FC7363 /* PostResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B74C2A12CC015D600FC7363 /* PostResponse.swift */; };
 		7B85DFAB26B03EEE00E019FB /* GetResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B85DFAA26B03EEE00E019FB /* GetResponseModel.swift */; };
 		7BC72EB824F30B3500913006 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC72EB724F30B3500913006 /* AppDelegate.swift */; };
 		7BC72EBA24F30B3500913006 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC72EB924F30B3500913006 /* SceneDelegate.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7B74C2A12CC015D600FC7363 /* PostResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostResponse.swift; sourceTree = "<group>"; };
 		7B85DFAA26B03EEE00E019FB /* GetResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetResponseModel.swift; sourceTree = "<group>"; };
 		7BAB793124F3B6F400F99859 /* AINetworkCalls */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AINetworkCalls; path = ..; sourceTree = "<group>"; };
 		7BC72EB424F30B3500913006 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -48,6 +50,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7B74C2A32CC016C300FC7363 /* Response */ = {
+			isa = PBXGroup;
+			children = (
+				7B74C2A12CC015D600FC7363 /* PostResponse.swift */,
+				7B85DFAA26B03EEE00E019FB /* GetResponseModel.swift */,
+			);
+			path = Response;
+			sourceTree = "<group>";
+		};
+		7B74C2A42CC016C700FC7363 /* Request */ = {
+			isa = PBXGroup;
+			children = (
+				7BD1A1482CB9DAF7004D38D4 /* PostRequest.swift */,
+			);
+			path = Request;
+			sourceTree = "<group>";
+		};
 		7BAB793224F3B7BC00F99859 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,8 +120,8 @@
 		7BD1A1462CB9DA9C004D38D4 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				7BD1A1482CB9DAF7004D38D4 /* PostRequest.swift */,
-				7B85DFAA26B03EEE00E019FB /* GetResponseModel.swift */,
+				7B74C2A42CC016C700FC7363 /* Request */,
+				7B74C2A32CC016C300FC7363 /* Response */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -183,6 +202,7 @@
 			files = (
 				7BE4A01424F52E0000E6BCE3 /* MasterViewController.swift in Sources */,
 				7BD1A1492CB9DAF7004D38D4 /* PostRequest.swift in Sources */,
+				7B74C2A22CC015D600FC7363 /* PostResponse.swift in Sources */,
 				7BD1A1442CB9DA24004D38D4 /* Blueprint.swift in Sources */,
 				7BC72EBC24F30B3500913006 /* ViewController.swift in Sources */,
 				7BC72EB824F30B3500913006 /* AppDelegate.swift in Sources */,

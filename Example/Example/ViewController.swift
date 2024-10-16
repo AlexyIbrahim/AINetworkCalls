@@ -26,7 +26,7 @@ class ViewController: MasterViewController {
 	//	}
 	
 	func postAPITest() {
-		APICalls.postMethod(paramters: .init(hand: "wave")).execute().then { response in
+		APICalls.postMethod(paramters: .init(hand: "wave")).execute().then { (response: PostResponse) in
 			print("post json response: \(String(describing: response))")
 		}.catch { error in
 			print("post error: \(String(describing: error))")

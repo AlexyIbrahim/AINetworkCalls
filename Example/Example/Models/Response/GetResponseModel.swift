@@ -1,11 +1,3 @@
-//
-//  GetResponseModel.swift
-//  Example
-//
-//  Created by Alexy Ibrahim on 27/07/2021.
-//  Copyright © 2021 Alexy Ibrahim. All rights reserved.
-//
-
 import Foundation
 
 // MARK: - Welcome
