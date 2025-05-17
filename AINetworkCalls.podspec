@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'AINetworkCalls'
-  s.version          = '1.2.5'
+  s.version          = '1.5.21'
   s.summary          = 'Networking library'
 
   s.homepage         = 'https://gitlab.com/alexyib/ainetworkcalls.git'

@@ -13,15 +13,6 @@
       meta: end_play
       when: git_status.stdout == ""
 
-    - name: Check if bump2version is installed
-      command: pip3 show bump2version
-      register: bump2version_installed
-      ignore_errors: yes
-
-    - name: Install bump2version
-      command: pip3 install bump2version
-      when: bump2version_installed.rc != 0
-
     - name: Check if git-changelog is installed
       command: git-changelog --version
       register: changelog_installed
@@ -46,13 +37,17 @@
       when: add_bumpversion_cfg is changed
       ignore_errors: yes
 
-    - name: Increment the patch version
-      command: bump2version --allow-dirty --list patch # allow uncommitted changes
-      register: bump2version_output
+    - name: Increment the version using custom script
+      shell: ./scripts/bump_version.sh
+      register: bump_version_output
 
     - name: Extract the new version
+      shell: grep "new_version" .bumpversion.cfg | awk -F'=' '{print $2}' | tr -d ' '
+      register: version_output
+
+    - name: Set version fact
       set_fact:
-        version: "{{ bump2version_output.stdout_lines | select('match', '^new_version=.*') | map('replace', 'new_version=', '') | first }}"
+        version: "{{ version_output.stdout }}"
 
     - name: Log version
       debug:
