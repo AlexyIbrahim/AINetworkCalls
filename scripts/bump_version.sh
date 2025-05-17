@@ -36,25 +36,13 @@ new_version="${major}.${minor}.${new_patch}"
 commit_msg="Bump version: ${current_version} --> ${new_version}"
 tag="${new_version}"
 
-# Start a YAML document and output only YAML content
-echo "---"
+# For Ansible to parse easily - write version to stdout on a single line
+echo "NEW_VERSION=${new_version}"
+
 if [ "$DRY_RUN" = true ]; then
-  echo "dry_run: true"
-  echo "current_version: ${current_version}"
-  echo "new_version: ${new_version}"
-  if [ "$DO_COMMIT" = true ]; then
-    echo "commit: ${commit_msg}"
-  fi
-  if [ "$DO_TAG" = true ]; then
-    echo "tag: ${tag}"
-  fi
+  echo "DRY RUN - Would update version from ${current_version} to ${new_version}"
   exit 0
 fi
-
-# Execute changes if not a dry run
-echo "dry_run: false"
-echo "current_version: ${current_version}"
-echo "new_version: ${new_version}"
 
 # Update .bumpversion.cfg
 sed -i '' "s/^current_version *= *.*/current_version = ${new_version}/" "$BUMPVERSION_CFG"

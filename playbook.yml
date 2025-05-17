@@ -42,12 +42,8 @@
       register: bump_version_output
 
     - name: Extract the new version
-      shell: grep "new_version" .bumpversion.cfg | awk -F'=' '{print $2}' | tr -d ' '
-      register: version_output
-
-    - name: Set version fact
       set_fact:
-        version: "{{ version_output.stdout }}"
+        version: "{{ bump_version_output.stdout | regex_search('NEW_VERSION=(.+)', '\\1') | first }}"
 
     - name: Log version
       debug:
