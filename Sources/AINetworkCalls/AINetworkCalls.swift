@@ -280,13 +280,13 @@ extension AINetworkCalls {
 	private final class func handleError(_ error: Error?, errorCode: Int? = nil, fetchResult _: [String: Any]? = nil) {
 		switch errorCode {
 		case URLError.Code.timedOut.rawValue:
-			ProgressHUD.error("Request Timeout", interaction: false, delay: 3)
+			ProgressHUD.error("Request Timeout", interaction: true, delay: 3)
 		case URLError.Code.cannotParseResponse.rawValue:
-			ProgressHUD.error("Could not parse response", interaction: false, delay: 3)
+			ProgressHUD.error("Could not parse response", interaction: true, delay: 3)
 		case URLError.Code.badServerResponse.rawValue:
-			ProgressHUD.error("Server is temporarily unavailable", interaction: false, delay: 3)
+			ProgressHUD.error("Server is temporarily unavailable", interaction: true, delay: 3)
 		default:
-			ProgressHUD.error(error?.localizedDescription, interaction: false, delay: 3)
+			ProgressHUD.error(error?.localizedDescription, interaction: true, delay: 3)
 		}
 	}
 }
