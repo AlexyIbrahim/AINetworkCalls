@@ -3,6 +3,7 @@
   vars:
     repo_url: "git@gitlab.com:alexyib/ainetworkcalls.git"
     remote_branch: "master"
+    stop_if_no_changes: false  # Set to false to continue even when no changes
 
   tasks:
     - name: Check the status of the working tree
@@ -11,7 +12,7 @@
 
     - name: Stop playbook if there are no changes to commit
       meta: end_play
-      when: git_status.stdout == ""
+      when: git_status.stdout == "" and stop_if_no_changes
 
     - name: Check if git-changelog is installed
       command: git-changelog --version
@@ -63,7 +64,7 @@
 
     - name: Commit all changes if any
       shell: git commit -m "Bump version to {{ version }} and update changelog"
-      when: git_status.stdout != ""
+      when: git_status.stdout != "" or not stop_if_no_changes
       ignore_errors: yes
 
     - name: Tag the commit with the new version
@@ -79,12 +80,12 @@
 
     - name: Push the commit to origin-glab
       shell: git push origin-glab {{ remote_branch }}
-      when: git_status.stdout != ""
+      when: git_status.stdout != "" or not stop_if_no_changes
       ignore_errors: yes
 
     - name: Push the commit to origin-gh
       shell: git push origin-gh {{ remote_branch }}
-      when: git_status.stdout != ""
+      when: git_status.stdout != "" or not stop_if_no_changes
       ignore_errors: yes
 
     - name: Push the tag to origin-glab

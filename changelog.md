@@ -1,6 +1,12 @@
 # My app - Changelog
 
-## 1.5.23  ( Sun May 18 2025 01:23:39 GMT+0300 (Eastern European Summer Time) )
+## 1.5.24  ( Mon May 19 2025 21:55:05 GMT+0300 (Eastern European Summer Time) )
+
+
+## Bug Fixes
+  - enable user interaction for error handling [6371077a](git@gitlab.com:alexyib/ainetworkcalls.git/commit/6371077a8f2ac61aa0720b980300e6eaa3f360c1) 
+  
+
 
 
 
